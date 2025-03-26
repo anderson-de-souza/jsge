@@ -5,7 +5,7 @@ class PhysicEngine {
     constructor(contextDelegate) {
         
         const magnitude = Math.hypot(contextDelegate.canvas.width, contextDelegate.canvas.height)
-        const cellSize = magnitude / 9
+        const cellSize = magnitude / 5
         
         this.spatialgrid = new SpatialGrid(cellSize)
         
@@ -37,11 +37,11 @@ class PhysicEngine {
 
             ghost.update(deltaTime)
 
-            const nearbyBodies = this.spatialgrid.findNearbyBodies(body)
+            const nearbyBodies = this.spatialgrid.findNearbyBodies(ghost)
 
             for (let otherBody of nearbyBodies) {
                 if (this.isIntersected(ghost, otherBody)) {
-                    this.applyRestitution(body, otherBody)
+                    this.applyRestitution(otherBody, body)
                 }
             }
 
@@ -72,10 +72,10 @@ class PhysicEngine {
         let relativeVelocityX = obj.velocityX - obst.velocityX
         let relativeVelocityY = obj.velocityY - obst.velocityY
         
-        let velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY;
-    
+        let velocityAlongNormal = relativeVelocityX * normalX + relativeVelocityY * normalY
+
         if (velocityAlongNormal > 0) return
-    
+
         let restitution = Math.min(obj.restitution, obst.restitution)
         let totalReciprocalMass = 1 / obj.mass + 1 / obst.mass
         let impulseMagnitude = -(1 + restitution) * velocityAlongNormal / totalReciprocalMass 

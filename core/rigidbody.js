@@ -1,6 +1,6 @@
 class RigidBody extends AnimatedView {
     
-    constructor(context, width, height, mass = 1, restitution = 0, friction = 1, damping = 0.1) {
+    constructor(context, width, height, mass = 1, restitution = 0.5, friction = 1, damping = 0.1) {
         super(context, width, height)
         
         this.mass = mass

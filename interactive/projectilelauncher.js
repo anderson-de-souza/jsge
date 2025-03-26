@@ -1,4 +1,4 @@
-class ProjectilePhysics {
+class ProjectileLauncher {
     
     static fixOverlap(projectile) {
         
