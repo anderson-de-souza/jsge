@@ -192,5 +192,21 @@ class ContextDelegate {
         return this.context.strokeStyle
     }
 
+    set font(value) {
+        this.context.font = value
+    }
+
+    get font() {
+        return this.context.font
+    }
+
+    set textBaseline(config) {
+        this.context.textBaseline = config
+    }
+
+    get textBaseline() {
+        return this.context.textBaseline
+    }
+
 }
 

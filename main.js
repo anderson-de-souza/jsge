@@ -4,34 +4,42 @@ canvas.height = innerHeight
 
 const context = new ContextDelegate(canvas)
 
-const player = new RigidBody(context, 50, 50)
-player.x = 150
+const text = new TextView(context, '')
+text.x = 0
+text.y = 0
 
-const enemy = new RigidBody(context, 100, 100)
-enemy.x = 700
+const keyMapping = {
 
-const enemy2 = new RigidBody(context, 100, 100)
-enemy2.x = 1200
+    ArrowUp: function() {
+        text.charSequence = 'UP'
+        text.x = (canvas.width / 2) - (text.width / 2)
+        text.y = 50
+    },
 
-setTimeout(() => {
-    player.forceX = 15000
-    enemy2.forceX = -20000
-}, 1000)
+    ArrowLeft: function() {
+        text.charSequence = 'LEFT'
+        text.x = 50
+        text.y = (canvas.height / 2) - (text.height / 2)
+    },
 
-context.renderer.add(player)
-context.renderer.add(enemy)
-context.renderer.add(enemy2)
-context.renderer.run()
+    ArrowRight: function() {
+        text.charSequence = 'RIGHT'
+        text.x = canvas.width - text.width - 50
+        text.y = (canvas.height / 2) - (text.height / 2)
+    },
 
-const physicEngine = new PhysicEngine(context)
+    ArrowDown: function() {
+        text.charSequence = 'DOWN'
+        text.x = (canvas.width / 2) - (text.width / 2)
+        text.y = canvas.height - text.height - 50
+    }
 
-const gridViewer = new SpatialGridViewer(context, physicEngine.spatialgrid.cellSize)
+}
 
-physicEngine.add(player)
-physicEngine.add(enemy)
-physicEngine.add(enemy2)
+const keyboardInputHandler = new KeyboardInputHandler(keyMapping)
+keyboardInputHandler.register()
 
-Looper.instance.add((deltaTime) => physicEngine.run(deltaTime))
+context.renderer.add(text)
+
 Looper.instance.add(() => context.renderer.run())
-Looper.instance.add(() => gridViewer.show())
 Looper.instance.startLoop()
