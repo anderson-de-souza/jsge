@@ -1,25 +1,30 @@
+
+import Record from './record.js'
+import RigidBody from './rigidbody.js'
+import SpatialGrid from './spatialgrid.js'
+
 class PhysicEngine {
     
-    #bodies
-    
-    constructor(contextDelegate) {
+    constructor(context) {
         
-        const magnitude = Math.hypot(contextDelegate.canvas.width, contextDelegate.canvas.height)
+        const magnitude = Math.hypot(context.canvas.width, context.canvas.height)
         const cellSize = magnitude / 5
         
         this.spatialgrid = new SpatialGrid(cellSize)
         
-        this.#bodies = new Set()
+        this.bodies = new Set()
         
     }
     
     add(body) {
-        this.#bodies.add(body)
-        this.spatialgrid.addBody(body)
+        if (body instanceof RigidBody) {
+            this.bodies.add(body)
+            this.spatialgrid.addBody(body)
+        }
     }
     
     remove(body) {
-        this.#bodies.delete(body)
+        this.bodies.delete(body)
         this.spatialgrid.removeBody(body)
     }
 
@@ -28,7 +33,7 @@ class PhysicEngine {
         const ghost = new RigidBody()
         const bodyRecord = new Record()
 
-        for (let body of this.#bodies) {
+        for (let body of this.bodies) {
 
             this.spatialgrid.removeBody(body)
 
@@ -106,3 +111,5 @@ class PhysicEngine {
     }
     
 }
+
+export default PhysicEngine

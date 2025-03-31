@@ -1,3 +1,4 @@
+
 class View {
 
     constructor(context, width, height) {
@@ -74,3 +75,5 @@ class View {
     }
     
 }
+
+export default View

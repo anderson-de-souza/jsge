@@ -1,3 +1,5 @@
+import AnimatedView  from './animatedview.js'
+
 class RigidBody extends AnimatedView {
     
     constructor(context, width, height, mass = 1, restitution = 0.5, friction = 1, damping = 0.1) {
@@ -99,3 +101,5 @@ class RigidBody extends AnimatedView {
     }
     
 }
+
+export default RigidBody

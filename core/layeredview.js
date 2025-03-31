@@ -1,3 +1,5 @@
+import AnimatedView from './animatedview.js'
+
 class LayeredView extends View {
     
     constructor(context, width, height, depth) {
@@ -24,3 +26,5 @@ class LayeredView extends View {
     }
     
 }
+
+export default LayeredView

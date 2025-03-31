@@ -28,3 +28,5 @@ class SpatialGridViewer {
     }
 
 }
+
+export default SpatialGridViewer

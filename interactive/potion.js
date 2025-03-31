@@ -52,3 +52,5 @@ class Portion {
         }).catch(error => this.errorToApply(error))
     }
 }
+
+export default Portion

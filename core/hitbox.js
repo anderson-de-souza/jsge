@@ -12,3 +12,5 @@ class HitBox {
     }
 
 }
+
+export default HitBox

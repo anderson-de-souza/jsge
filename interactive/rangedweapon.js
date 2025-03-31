@@ -1,3 +1,5 @@
+import RigidBody from '../core/rigidbody.js'
+
 class RangedWeapon extends RigidBody {
     
     #attackDuration
@@ -53,3 +55,5 @@ class RangedWeapon extends RigidBody {
     }
     
 }
+
+export default RangedWeapon

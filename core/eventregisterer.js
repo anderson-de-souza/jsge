@@ -1,12 +1,21 @@
 class EventRegisterer {
 
     constructor(...eventTypeList) {
-        this.eventTypeSet = new Set(eventTypeList)
+
+        this.eventTypeSet = new Set()
+
+        for (const eventType of eventTypeList) {
+            this.add(eventType)
+        }
+
         this.registeredsMap = new Map()
+
     }
 
-    add(newEventType) {
-        this.eventTypeSet.add(newEventType)
+    add(eventType) {
+        if (typeof eventType === 'string') {
+            this.eventTypeSet.add(eventType)
+        }
     }
 
     remove(eventType) {
@@ -42,3 +51,5 @@ class EventRegisterer {
     }
     
 }
+
+export default EventRegisterer

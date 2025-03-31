@@ -1,15 +1,20 @@
+import CanvasDelegate from './canvasdelegate.js'
+import Renderer from './renderer.js'
+
 class ContextDelegate {
     
     constructor(canvas) {
 
-        if (!(canvas instanceof HTMLCanvasElement)) {
+        if (!(canvas instanceof CanvasDelegate)) {
             throw new Error('Error: arg passed is not a <canvas>')
         }
         
         this.context = canvas.getContext('2d')
 
-        this.renderer = new Renderer(this)
-        
+        this.foreground = new Renderer(this)
+        this.middleground = new Renderer(this)
+        this.background = new Renderer(this)
+
     }
     
     get canvas() {
@@ -210,3 +215,4 @@ class ContextDelegate {
 
 }
 
+export default ContextDelegate

@@ -1,3 +1,5 @@
+import RigidBody from '../core/rigidbody.js'
+
 class Weapon extends RigidBody {
     
     #attackDuration
@@ -36,3 +38,5 @@ class Weapon extends RigidBody {
     }
     
 }
+
+export default Weapon

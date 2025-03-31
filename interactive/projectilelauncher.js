@@ -2,7 +2,7 @@ class ProjectileLauncher {
     
     static fixOverlap(projectile) {
         
-        if (ProjectilePhysics.isTargetHit(projectile)) {
+        if (ProjectileLauncher.isTargetHit(projectile)) {
             
             const overlapX = projectile.width - Math.abs(projectile.deltaX)
             const overlapY = projectile.height - Math.abs(projectile.deltaY)
@@ -22,3 +22,5 @@ class ProjectileLauncher {
     }
     
 }
+
+export default ProjectileLauncher

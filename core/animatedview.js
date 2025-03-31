@@ -1,3 +1,5 @@
+import View from './view.js'
+
 class AnimatedView extends View {
     
     constructor(context, width, height, spriteWidth = 64, spriteHeight = 64) {
@@ -28,22 +30,26 @@ class AnimatedView extends View {
     
     draw() {
         
-        this.frameCount++
+        if (this.isCrop) {
+            
+            this.frameCount++
         
-        if (this.frameCount >= this.frameMaxCount) {
+            if (this.frameCount >= this.frameMaxCount) {
+                
+                this.onFrameUpdate()
+                
+                this.frameCount = 0
+                
+            }
             
-            this.onFrameUpdate()
-            
-            this.frameCount = 0
-            
+            this.crop(
+                this.spriteCountX * this.spriteWidth,
+                this.spriteCountY * this.spriteHeight,
+                this.spriteWidth,
+                this.spriteHeight
+            )
+
         }
-        
-        this.crop(
-            this.spriteCountX * this.spriteWidth,
-            this.spriteCountY * this.spriteHeight,
-            this.spriteWidth,
-            this.spriteHeight
-        )
         
         super.draw()
         
@@ -54,3 +60,5 @@ class AnimatedView extends View {
     }
     
 }
+
+export default AnimatedView

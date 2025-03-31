@@ -2,16 +2,22 @@ class Identifier {
     
     static #instance
     
-    #maxSize = 64
-    #idList = new Set()
-    
     constructor() {
+
+        if (Identifier.#instance) {
+            return Identifier.#instance
+        }
+
         Identifier.#instance = this
+
+        this.maxSize = 64
+        this.idList = new Set()
+
     }
     
     generateId() {
         
-        if (this.#idList.size >= this.#maxSize) {
+        if (this.idList.size >= this.maxSize) {
             throw new Error("the maximum number of ids was reached")
         }
         
@@ -19,9 +25,9 @@ class Identifier {
         
         do {
             newId = Math.floor(Math.random() * 1000)
-        } while(this.#idList.has(newId))
+        } while(this.idList.has(newId))
         
-        this.#idList.add(newId)
+        this.idList.add(newId)
         
         return newId
         
@@ -36,3 +42,5 @@ class Identifier {
     }
     
 }
+
+export default Identifier

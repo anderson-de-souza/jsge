@@ -1,24 +1,39 @@
+import View from './view.js'
+
 class Renderer {
     
-    #viewSet
-    #context
-    
     constructor(context) {
-        this.#viewSet = new Set()
-        this.#context = context
+        this.context = context
+        this.viewSet = new Set()
+        this.clearBefore = false
     }
     
     add(view) {
-        this.#viewSet.add(view)
+        if (view instanceof View) {
+            this.viewSet.add(view)
+        }
     }
     
     remove(view) {
-        this.#viewSet.delete(view)
+        this.viewSet.delete(view)
     }
     
     run() {
-        this.#context.clearRect(0, 0, this.#context.canvas.width, this.#context.canvas.height)
-        this.#viewSet.forEach(view => view.draw())
+
+        if (this.clearBefore) {
+            this.clearCanvas()
+        }
+
+        for (const view of this.viewSet) {
+            view.draw()
+        }
+
+    }
+
+    clearCanvas() {
+        this.context.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height)
     }
     
 }
+
+export default Renderer

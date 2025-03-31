@@ -1,3 +1,5 @@
+import RigidBody from '../core/rigidbody.js'
+
 class FixedTargetProjectile extends RigidBody {
     
     static EPSILON = 1e-15
@@ -57,3 +59,5 @@ class FixedTargetProjectile extends RigidBody {
     }
     
 }
+
+export default FixedTargetProjectile

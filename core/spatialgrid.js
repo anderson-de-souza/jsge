@@ -80,3 +80,5 @@ class SpatialGrid {
     }
 
 }
+
+export default SpatialGrid

@@ -1,3 +1,5 @@
+import EventRegisterer from './eventregisterer.js'
+
 class KeyboardInputHandler {
 
     constructor(keyMapping) {
@@ -14,7 +16,9 @@ class KeyboardInputHandler {
     }
 
     onKey(event) {
-        this.keyMapping[event.key]?.()
+        this.keyMapping[event.key]?.(event)
     }
 
 }
+
+export default KeyboardInputHandler

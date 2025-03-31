@@ -1,3 +1,5 @@
+import FixedTargetProjectile from './fixedtargetprojectile'
+
 class DinamicTargetProjectile extends FixedTargetProjectile {
     
     static LERP_FACTOR = 0.2
@@ -36,3 +38,5 @@ class DinamicTargetProjectile extends FixedTargetProjectile {
     }
     
 }
+
+export default DinamicTargetProjectile
