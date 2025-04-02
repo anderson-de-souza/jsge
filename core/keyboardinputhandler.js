@@ -2,9 +2,14 @@ import EventRegisterer from './eventregisterer.js'
 
 class KeyboardInputHandler {
 
-    constructor(keyMapping) {
+    constructor(
+        keyMapping,
+        events = [
+            'keydown', 'keyup'
+        ]
+    ) {
         this.keyMapping = keyMapping
-        this.eventRegister = new EventRegisterer('keydown', 'keyup')
+        this.eventRegister = new EventRegisterer(events)
     }
 
     register() {
