@@ -1,62 +1,26 @@
-import CanvasDelegate from './core/canvasdelegate.js'
-import ContextDelegate from './core/contextdelegate.js'
-import KeyboardInputHandler from './core/keyboardinputhandler.js'
-import Looper from './core/looper.js'
-import MouseInputHandler from './core/mouseinputhandler.js'
-import TextView from './core/textview.js'
+import CanvasProxy from './core/canvasproxy.js'
+import ContextProxy from './core/contextproxy.js'
+import Circle from './core/shape/circle.js'
+import ImageView from './core/view/imageview.js'
+import TextView from './core/view/textview.js'
+import View from './core/view/view.js'
 
-const canvas = new CanvasDelegate('canvas')
+let canvas = new CanvasProxy('canvas')
 canvas.fullScreen()
 
-const context = new ContextDelegate(canvas)
+let context = new ContextProxy(canvas)
 
-const text = new TextView(context, '')
-text.color = 'red'
-text.x = 0
-text.y = 0
+const circle = new Circle(100)
+circle.x = 200
+circle.y = 200
 
-const keyMapping = {
+let view = new ImageView(context, circle)
+view.isCropped = true
+view.crop(16, 16, 20, 30)
+view.load('./resources/hero.png')
 
-    ArrowUp: function() {
-        text.charSequence = 'UP'
-        text.x = (canvas.width / 2) - (text.textWidth / 2)
-        text.y = 50
-    },
-
-    ArrowLeft: function() {
-        text.charSequence = 'LEFT'
-        text.x = 50
-        text.y = (canvas.height / 2) - (text.textHeight / 2)
-    },
-
-    ArrowRight: function() {
-        text.charSequence = 'RIGHT'
-        text.x = canvas.width - text.textWidth - 50
-        text.y = (canvas.height / 2) - (text.textHeight / 2)
-    },
-
-    ArrowDown: function() {
-        text.charSequence = 'DOWN'
-        text.x = (canvas.width / 2) - (text.textWidth / 2)
-        text.y = canvas.height - text.textHeight - 50
-    }
-
-}
-
-const keyboardInputHandler = new KeyboardInputHandler(keyMapping)
-keyboardInputHandler.register()
-
-const mouseinputhandler = new MouseInputHandler({
-    mousemove: function(event) {
-        console.log(event.x, event.y)
-    }
-})
-
-mouseinputhandler.register(canvas)
-
-context.background.add(text)
-
-context.background.clearBefore = true
-
-Looper.instance.add(() => context.background.run())
-Looper.instance.startLoop()
+let text = new TextView(context)
+text.content = 'so good!'
+text.shape.x = 400
+text.shape.y = 200
+text.draw()

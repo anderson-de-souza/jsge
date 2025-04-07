@@ -1,4 +1,4 @@
-import View from './view.js'
+import View from './view/view.js'
 
 class Renderer {
     
@@ -25,7 +25,11 @@ class Renderer {
         }
 
         for (const view of this.viewSet) {
-            view.draw()
+            try {
+                view.draw()
+            } catch (e) {
+                console.log(e)
+            }
         }
 
     }
