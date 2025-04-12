@@ -1,7 +1,6 @@
-import auth from '../../util/auth.js'
 import Circle from '../shape/circle.js'
+import expect from '../../util/expect.js'
 import Rectangle from '../shape/rectangle.js'
-import typed from '../../util/typed.js'
 import View from './view.js'
 
 class ImageView extends View { 
@@ -30,7 +29,7 @@ class ImageView extends View {
     }
 
     load(value) {
-        this.url = auth('string', value)
+        this.url = expect('string', value)
         this.image.src = this.url
     }
 
@@ -45,13 +44,13 @@ class ImageView extends View {
 
         if (this.style.visible) {
 
-            const path = auth(Path2D, this.shape.create())
+            const path = expect(Path2D, this.shape.create())
 
             if (this.isLoaded && !this.isCropped) {
                 
                 this.context.clip(path)
 
-                if (typed(Rectangle, this.shape)) {
+                if (expect(Rectangle, this.shape, false)) {
 
                     this.context.drawImage(
                         this.image, 
@@ -59,7 +58,7 @@ class ImageView extends View {
                         this.shape.width, this.shape.height
                     )
 
-                } else if (typed(Circle, this.shape)) {
+                } else if (expect(Circle, this.shape, false)) {
 
                     this.context.drawImage(
                         this.image, 
@@ -75,7 +74,7 @@ class ImageView extends View {
 
                 this.context.clip(path)
 
-                if (typed(Rectangle, this.shape)) {
+                if (expect(Rectangle, this.shape, false)) {
 
                     this.context.drawImage(
                         this.image,
@@ -85,7 +84,7 @@ class ImageView extends View {
                         this.shape.width, this.shape.height
                     )
 
-                } else if (typed(Circle, this.shape)) {
+                } else if (expect(Circle, this.shape, false)) {
 
                     this.context.drawImage(
                         this.image, 

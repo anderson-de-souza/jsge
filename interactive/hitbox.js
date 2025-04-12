@@ -1,5 +1,5 @@
 
-import Configuration from './configuration'
+import Configuration from '../core/configuration'
 import HitBoxViewer from '../debug/hitboxviewer'
 
 class HitBox {

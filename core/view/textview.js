@@ -1,4 +1,4 @@
-import auth from '../../util/auth.js'
+import expect from '../../util/expect.js'
 import Rectangle from '../shape/rectangle.js'
 import View from './view.js'
 
@@ -6,7 +6,7 @@ class TextView extends View {
 
     
     constructor(context, shape = new Rectangle()) {
-        super(context, auth(Rectangle, shape))
+        super(context, expect(Rectangle, shape))
         this.content = ''
         this.style = {
             ...this.style,

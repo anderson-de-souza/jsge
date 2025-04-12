@@ -1,4 +1,4 @@
-import auth from '../../util/auth.js'
+import expect from '../../util/expect.js'
 import ContextProxy from '../contextproxy.js'
 import Rectangle from '../shape/rectangle.js'
 import Shape from '../shape/shape.js'
@@ -6,8 +6,8 @@ import Shape from '../shape/shape.js'
 class View {
 
     constructor(context, shape = new Rectangle()) {
-        this.context = auth(ContextProxy, context)
-        this.shape = auth(Shape, shape)
+        this.context = expect(ContextProxy, context)
+        this.shape = expect(Shape, shape)
         this.style = { 
             color: 'black',
             filled: true,
@@ -19,7 +19,7 @@ class View {
 
         if (this.style.visible) {
 
-            const path = auth(Path2D, this.shape.create())
+            const path = expect(Path2D, this.shape.create())
 
             if (this.style.filled) {
 

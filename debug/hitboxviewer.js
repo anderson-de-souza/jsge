@@ -1,4 +1,4 @@
-import HitBox from '../core/hitbox';
+import HitBox from '../interactive/hitbox';
 
 class HitBoxViewer {
 

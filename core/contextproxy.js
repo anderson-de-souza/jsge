@@ -1,11 +1,11 @@
-import auth from '../util/auth.js'
+import expect from '../util/expect.js'
 import CanvasProxy from './canvasproxy.js'
 
 class ContextProxy {
 
     constructor(canvas) {
 
-        const context = auth(CanvasProxy, canvas).getContext('2d')
+        const context = expect(CanvasProxy, canvas).getContext('2d')
 
         return new Proxy(this, {
             get(target, propName) {
