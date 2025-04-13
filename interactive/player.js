@@ -1,6 +1,7 @@
 import expect from '../util/expect.js'
 import KeyboardInputHandler from '../core/keyboardinputhandler.js'
 import MouseInputHandler from '../core/mouseinputhandler.js'
+import ContextProxy from '../core/contextproxy.js'
 
 class Player {
 
@@ -93,3 +94,5 @@ class Player {
     }
 
 }
+
+export default Player

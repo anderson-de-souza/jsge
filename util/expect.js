@@ -34,6 +34,8 @@ const expect = (function() {
             actual = 'null'
         } else if (typeof field === 'function' && !(typeof type === 'string' && TYPES.includes(type)) && typeof type !== 'function') {
             actual = field.name
+        } else if (typeof field === 'object' && TYPES.includes(field.constructor.name.toLowerCase())) {
+            actual = field.constructor.name.toLowerCase()
         } else if (typeof field === 'object') {
             actual = field.constructor.name
         } else {

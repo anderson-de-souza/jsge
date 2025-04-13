@@ -1,5 +1,10 @@
 class Shape {
-    
+
+    x
+    y
+    width
+    height
+
     create(context) {
         
     }

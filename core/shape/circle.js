@@ -7,9 +7,10 @@ class Circle extends Shape {
         this.x = 0
         this.y = 0
         this.radius = radius
+        this.width = this.diameter
+        this.height = this.diameter
         this.startAngle = 0
         this.endAngle = Math.PI * 2
-        this.angle = 0
     }
 
     get diameter() {

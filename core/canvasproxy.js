@@ -24,6 +24,7 @@ class CanvasProxy {
                 return undefined
 
             },
+            
             set(target, propName, newValue) {
 
                 if (target[propName]) {
@@ -36,7 +37,8 @@ class CanvasProxy {
                 return target[propName] || canvas[propName]
 
             }
-        });
+
+        })
     }
 
     fullScreen() {

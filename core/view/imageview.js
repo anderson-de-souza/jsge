@@ -41,70 +41,49 @@ class ImageView extends View {
     }
 
     draw() {
-
+        
         if (this.style.visible) {
 
             const path = expect(Path2D, this.shape.create())
+    
+            this.context.clip(path)
+        
+            if (this.isLoaded) {
 
-            if (this.isLoaded && !this.isCropped) {
-                
-                this.context.clip(path)
-
-                if (expect(Rectangle, this.shape, false)) {
-
-                    this.context.drawImage(
-                        this.image, 
-                        this.shape.x, this.shape.y, 
-                        this.shape.width, this.shape.height
-                    )
-
-                } else if (expect(Circle, this.shape, false)) {
-
-                    this.context.drawImage(
-                        this.image, 
-                        this.shape.x - this.shape.radius,
-                        this.shape.y - this.shape.radius, 
-                        this.shape.diameter, 
-                        this.shape.diameter
-                    )
-
-                }
-
-            } else if (this.isLoaded && this.isCropped) {
-
-                this.context.clip(path)
-
-                if (expect(Rectangle, this.shape, false)) {
+                if (this.isCropped) {
 
                     this.context.drawImage(
                         this.image,
                         this.cropArea.x, this.cropArea.y,
                         this.cropArea.width, this.cropArea.height,
-                        this.shape.x, this.shape.y, 
-                        this.shape.width, this.shape.height
+                        this.shape.x - (this.shape.width / 2),
+                        this.shape.y - (this.shape.height / 2),
+                        this.shape.width,
+                        this.shape.height
                     )
 
-                } else if (expect(Circle, this.shape, false)) {
+                } else {
 
                     this.context.drawImage(
-                        this.image, 
-                        this.cropArea.x, this.cropArea.y,
-                        this.cropArea.width, this.cropArea.height,
-                        this.shape.x - this.shape.radius,
-                        this.shape.y - this.shape.radius, 
-                        this.shape.diameter, 
-                        this.shape.diameter
+                        this.image,
+                        this.shape.x - (this.shape.width / 2),
+                        this.shape.y - (this.shape.height / 2),
+                        this.shape.width,
+                        this.shape.height
                     )
 
                 }
 
             } else {
+
                 super.draw()
 
             }
-        }
-        
+            
+        }  
+
     }
+    
 
 }
 
