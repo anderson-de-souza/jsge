@@ -16,8 +16,6 @@ class Circle extends Shape {
         this.radius = radius
         this.startAngle = 0
         this.endAngle = 360
-        this.axisAngle = 0
-        this.counterClockwise = true
         this.closeDrawing = true
     }
 
@@ -37,12 +35,20 @@ class Circle extends Shape {
         this.#startAngle = expect('number', value)
     }
 
+    get startAngleRadians() {
+        return Radians(this.#startAngle)
+    }
+
     get endAngle() {
         return this.#endAngle
     }
 
     set endAngle(value) {
         this.#endAngle = expect('number', value)
+    }
+
+    get endAngleRadians() {
+        return Radians(this.#endAngle)
     }
 
     get closeDrawing() {
@@ -67,9 +73,8 @@ class Circle extends Shape {
 
     create() {
         const path = new Path2D()
-        const axisAngleRad = Radians(this.axisAngle)
-        const start = axisAngleRad + Radians(this.startAngle)
-        const end = axisAngleRad + Radians(this.endAngle)
+        const start = this.axisAngleRadians + this.startAngleRadians
+        const end = this.axisAngleRadians + this.endAngleRadians
         path.arc(this.x, this.y, this.radius, start, end, this.counterClockwise)
         if (this.closeDrawing) {
             path.closePath() 

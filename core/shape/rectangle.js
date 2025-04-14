@@ -9,8 +9,6 @@ class Rectangle extends Shape {
         this.y = 0
         this.width = width
         this.height = height
-        this.axisAngle = 0
-        this.counterClockwise = true
     }
 
     get originCorners() {
@@ -24,10 +22,8 @@ class Rectangle extends Shape {
 
     #rotate() {
 
-        const rad = Radians(this.axisAngle)
-
-        const sin = Math.sin(rad)
-        const cos = Math.cos(rad)
+        const sin = Math.sin(this.axisAngleRadians)
+        const cos = Math.cos(this.axisAngleRadians)
 
         return this.originCorners.map(corner => ({
             x: this.x + corner.x * cos - corner.y * sin,

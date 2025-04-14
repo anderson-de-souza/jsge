@@ -1,4 +1,5 @@
 import expect from '../../util/expect.js'
+import Radians from '../../util/radians.js'
 
 class Shape {
 
@@ -57,6 +58,10 @@ class Shape {
 
     set axisAngle(value) {
         this.#axisAngle = expect('number', value)
+    }
+
+    get axisAngleRadians() {
+        return Radians(this.#axisAngle)
     }
 
     get counterClockwise() {
