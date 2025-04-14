@@ -9,15 +9,8 @@ class Rectangle extends Shape {
         this.y = 0
         this.width = width
         this.height = height
-        this.angle = 0
-    }
-
-    get halfWidth() {
-        return this.width / 2
-    }
-    
-    get halfHeight() {
-        return this.height / 2
+        this.axisAngle = 0
+        this.counterClockwise = true
     }
 
     get originCorners() {
@@ -29,9 +22,9 @@ class Rectangle extends Shape {
         ]
     }
 
-    rotate() {
+    #rotate() {
 
-        const rad = Radians(this.angle)
+        const rad = Radians(this.axisAngle)
 
         const sin = Math.sin(rad)
         const cos = Math.cos(rad)
@@ -47,15 +40,15 @@ class Rectangle extends Shape {
 
         const path = new Path2D()
 
-        const rotatedCorners = this.rotate()
+        const rotatedCorners = this.#rotate()
 
-        path.moveTo(rotatedCorners[0].x, rotatedCorners[0].y)
+        const corners = this.counterClockwise ? rotatedCorners.reverse(): rotatedCorners
 
-        for (let i = 1; i < rotatedCorners.length; i++) {
-            path.lineTo(rotatedCorners[i].x, rotatedCorners[i].y)
+        path.moveTo(corners[0].x, corners[0].y)
+
+        for (let i = 1; i < corners.length; i++) {
+            path.lineTo(corners[i].x, corners[i].y)
         }
-
-        path.closePath()
 
         return path
 
