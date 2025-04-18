@@ -44,11 +44,14 @@ class ImageView extends View {
         
         if (this.style.visible) {
 
-            const path = expect(Path2D, this.shape.create())
+            const path = expect(Path2D, this.shape.getDrawingPath())
     
             this.context.clip(path)
         
             if (this.isLoaded) {
+
+                this.context.save()
+                this.context.rotate(this.shape.axisAngleRadians)
 
                 if (this.isCropped) {
 
@@ -73,6 +76,8 @@ class ImageView extends View {
                     )
 
                 }
+
+                this.context.restore()
 
             } else {
 

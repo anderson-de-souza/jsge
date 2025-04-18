@@ -9,8 +9,8 @@ class Shape {
     #width = 0
     #height = 0
 
-    #axisAngle = 0
-    #counterClockwise = false
+    #axisAngle = 90
+    #counterClockwise = true
 
     get x() {
         return this.#x
@@ -72,8 +72,12 @@ class Shape {
         this.#counterClockwise = expect('boolean', value)
     }
 
-    create(context) {
-        throw new Error('Method \'create()\' must be implemented in subclass')
+    rotateAxis() {
+
+    }
+
+    getDrawingPath(context) {
+        
     }
 
 }

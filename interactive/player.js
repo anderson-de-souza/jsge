@@ -1,6 +1,6 @@
 import expect from '../util/expect.js'
-import KeyboardInputHandler from '../core/keyboardinputhandler.js'
-import MouseInputHandler from '../core/mouseinputhandler.js'
+import KeyboardInputHandler from '../core/input/keyboardinputhandler.js'
+import MouseInputHandler from '../core/input/mouseinputhandler.js'
 import ContextProxy from '../core/contextproxy.js'
 
 class Player {

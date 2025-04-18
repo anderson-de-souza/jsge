@@ -1,7 +1,10 @@
+import expect from '../../util/expect.js'
 import Radians from '../../util/radians.js'
 import Shape from './shape.js'
 
 class Rectangle extends Shape {
+
+    #corners
 
     constructor(width = 0, height = 0) {
         super()
@@ -9,6 +12,7 @@ class Rectangle extends Shape {
         this.y = 0
         this.width = width
         this.height = height
+        this.#corners = this.originCorners
     }
 
     get originCorners() {
@@ -20,31 +24,38 @@ class Rectangle extends Shape {
         ]
     }
 
-    #rotate() {
+    get corners() {
+        return this.#corners
+    }
 
-        const sin = Math.sin(this.axisAngleRadians)
-        const cos = Math.cos(this.axisAngleRadians)
+    rotateAxis() {
 
-        return this.originCorners.map(corner => ({
+        const rotation = this.axisAngle + (this.counterClockwise ? -90: 90)
+        const rotationAngleRadians = Radians(rotation)
+
+        const sin = Math.sin(rotationAngleRadians)
+        const cos = Math.cos(rotationAngleRadians)
+
+        this.#corners = this.originCorners.map(corner => ({
             x: this.x + corner.x * cos - corner.y * sin,
             y: this.y + corner.x * sin + corner.y * cos
         }))
 
     }
 
-    create() {
+    getDrawingPath() {
+
+        this.rotateAxis()
 
         const path = new Path2D()
 
-        const rotatedCorners = this.#rotate()
+        path.moveTo(this.corners[0].x, this.corners[0].y)
 
-        const corners = this.counterClockwise ? rotatedCorners.reverse(): rotatedCorners
-
-        path.moveTo(corners[0].x, corners[0].y)
-
-        for (let i = 1; i < corners.length; i++) {
-            path.lineTo(corners[i].x, corners[i].y)
+        for (let i = 1; i < this.corners.length; i++) {
+            path.lineTo(this.corners[i].x, this.corners[i].y)
         }
+
+        path.lineTo(this.corners[0].x, this.corners[0].y)
 
         return path
 

@@ -9,6 +9,7 @@ class Configuration {
         Configuration.#instance = this
         this.language = 'en'
         this.isDebugMode = false
+        // TODO: collisionMethod = 'sat' || 'aabb'
     }
 
     static get instance() {

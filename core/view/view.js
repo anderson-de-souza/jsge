@@ -5,9 +5,13 @@ import Shape from '../shape/shape.js'
 
 class View {
 
+    #context
+    #shape
+    #style
+
     constructor(context, shape = new Rectangle()) {
-        this.context = expect(ContextProxy, context)
-        this.shape = expect(Shape, shape)
+        this.context = context
+        this.shape = shape
         this.style = { 
             color: 'black',
             filled: true,
@@ -15,11 +19,35 @@ class View {
         }
     }
 
+    get context() {
+        return this.#context
+    }
+    
+    set context(value) {
+        this.#context = expect(ContextProxy, value)
+    }
+    
+    get shape() {
+        return this.#shape
+    }
+    
+    set shape(value) {
+        this.#shape = expect(Shape, value)
+    }
+    
+    get style() {
+        return this.#style
+    }
+    
+    set style(value) {
+        this.#style = value
+    }
+
     draw() {
 
         if (this.style.visible) {
 
-            const path = expect(Path2D, this.shape.create())
+            const path = expect(Path2D, this.shape.getDrawingPath())
 
             if (this.style.filled) {
 

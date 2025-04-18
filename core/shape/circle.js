@@ -63,19 +63,47 @@ class Circle extends Shape {
         return this.#radius * 2
     }
 
+    /*
+     * O diâmetro é calculado como a média entre a largura (width) e a altura (height),
+     * caso esses valores sejam definidos dinamicamente através dos setters.
+     */
+
+    set width(value) {
+        expect('number', value)
+        super.width = value 
+        this.radius = (value + super.height) / 4
+    }
+    
+    set height(value) {
+        expect('number', value)
+        super.height = value
+        this.radius = (value + super.width) / 4
+    }    
+
     get width() {
         return this.diameter
     }
     
     get height() {
         return this.diameter
-    }    
+    }
 
-    create() {
+    /*
+     * O ângulo do eixo (axisAngle) representa a direção para a qual o topo do desenho está apontando.
+     * Ele é diferente do ângulo de início (startAngle) e fim (endAngle), que indicam
+     * onde o desenho começa e onde ele termina.
+     */
+    
+    rotateAxis() {
+        const rotation = this.axisAngle + (this.counterClockwise ? -90: 90)
+        this.startAngle -= rotation
+        this.endAngle -= rotation
+    }
+
+    getDrawingPath() {
+        this.rotateAxis()
         const path = new Path2D()
-        const start = this.axisAngleRadians + this.startAngleRadians
-        const end = this.axisAngleRadians + this.endAngleRadians
-        path.arc(this.x, this.y, this.radius, start, end, this.counterClockwise)
+        path.arc(this.x, this.y, this.radius, this.startAngleRadians, this.endAngleRadians, this.counterClockwise)
         if (this.closeDrawing) {
             path.closePath() 
         }

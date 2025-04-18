@@ -26,7 +26,6 @@ class TextView extends View {
     }
 
     get textMetrics() {
-        this.updateFontStyle()
         return this.context.measureText(this.content)
     }
 
@@ -39,6 +38,7 @@ class TextView extends View {
     }
 
     resize() {
+        this.updateFontStyle()
         this.shape.width = this.textWidth
         this.shape.height = this.textHeight
     }
