@@ -11,22 +11,29 @@ canvas.fullScreen()
 let context = new ContextProxy(canvas)
 
 const circle = new Circle(100)
-circle.x = 200
-circle.y = 200
+circle.centerX = 200
+circle.centerY = 200
 circle.endAngle = 180
 circle.closeDrawing = false
-circle.axisAngle = 45
+circle.axisAngle = 360
 
 const rect = new Rectangle(170, 90)
-rect.x = 200
-rect.y = 200
+rect.centerX = 200
+rect.centerY = 200
 
-rect.axisAngle = 90
+rect.axisAngle = 45
 
-const view = new View(context, circle)
+const view = new View(context, rect)
 view.style.filled = false
 
+const rect2 = new Rectangle(200, 200)
+rect2.centerX = 100
+rect2.centerY = 100
+const view2 = new View(context, rect2)
+view2.style.filled = false
+
 view.draw()
+view2.draw()
 
 const player = new Player(context)
 

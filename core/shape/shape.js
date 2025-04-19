@@ -1,10 +1,10 @@
 import expect from '../../util/expect.js'
 import Radians from '../../util/radians.js'
+import Vector from '../../util/vector.js'
 
 class Shape {
 
-    #x = 0
-    #y = 0
+    #centerVector = new Vector(0, 0)
 
     #width = 0
     #height = 0
@@ -12,20 +12,28 @@ class Shape {
     #axisAngle = 90
     #counterClockwise = true
 
-    get x() {
-        return this.#x
+    get centerVector() {
+        return this.#centerVector
     }
 
-    set x(value) {
-        this.#x = expect('number', value)
+    set centerVector(value) {
+        this.#centerVector = expect(Vector, value)
     }
 
-    get y() {
-        return this.#y
+    get centerX() {
+        return this.centerVector.x
     }
 
-    set y(value) {
-        this.#y = expect('number', value)
+    set centerX(value) {
+        this.centerVector.x = expect('number', value)
+    }
+
+    get centerY() {
+        return this.centerVector.y
+    }
+
+    set centerY(value) {
+        this.centerVector.y = expect('number', value)
     }
 
     get width() {
@@ -73,11 +81,11 @@ class Shape {
     }
 
     rotateAxis() {
-
+        throw new Error('getDrawingPath must be implemented by subclasses of Shape.')
     }
 
     getDrawingPath(context) {
-        
+        throw new Error('getDrawingPath must be implemented by subclasses of Shape.')
     }
 
 }
