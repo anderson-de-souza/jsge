@@ -1,7 +1,7 @@
 
 import Record from './record.js'
 import RigidBody from '../rigidbody.js'
-import SpatialGrid from './spatialgrid.js'
+import SpatialGrid from '../../util/spatialgrid.js'
 
 class PhysicEngine {
     

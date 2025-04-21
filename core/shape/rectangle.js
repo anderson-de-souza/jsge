@@ -35,41 +35,20 @@ class Rectangle extends Shape {
         }
         this.#corners = value
     }
-
-    /*
-    O ângulo do eixo (axisAngle) representa a direção para a qual o topo do desenho está apontando.
-    rotate(centerVector, angleDegrees, counterClockwise = true) {
-
-        expect(Vector, centerVector)
-
-        const rotation = angleDegrees * (counterClockwise ? 1 : -1)
-        const rotationRadians = Radians(rotation)
-
-        const cos = Math.cos(rotationRadians)
-        const sin = Math.sin(rotationRadians)
-        
-        return new Vector(
-            centerVector.x + this.x * cos - this.y * sin,
-            centerVector.y + this.x * sin + this.y * cos
-        )
-
-    }
     
-    */
+    rotate() {
 
-    rotateAxis() {
-
-        const rotation = this.axisAngle + (this.counterClockwise ? -90 : 90)
+        const rotation = this.rotationAngle + (this.counterClockwise ? -90 : 90)
 
         this.corners = this.originCorners.map(corner => 
-            corner.rotate(this.centerVector, rotation, this.counterClockwise)
+            corner.rotate(this.center, rotation, this.counterClockwise)
         )
 
     }
 
     getDrawingPath() {
         
-        this.rotateAxis()
+        this.rotate()
 
         const path = new Path2D()
 

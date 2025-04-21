@@ -40,21 +40,25 @@ class Vector {
         this.#y = expect('number', value)
     }
 
-    add(otherVector) {
-        expect(Vector, otherVector)
-        const result = new Vector(this.x + otherVector.x, this.y + otherVector.y)
+    add(other) {
+        expect(Vector, other)
+        const result = new Vector(this.x + other.x, this.y + other.y)
         return result
     }
 
-    subtract(otherVector) {
-        expect(Vector, otherVector)
-        const result = new Vector(this.x - otherVector.x, this.y - otherVector.y)
+    subtract(other) {
+        expect(Vector, other)
+        const result = new Vector(this.x - other.x, this.y - other.y)
         return result
     }
 
-    rotate(centerVector, angleDegrees, counterClockwise = true) {
+    scale(scaleX, scaleY) {
+        return new Vector(this.x * scaleX, this.y * scaleY)
+    }
 
-        expect(Vector, centerVector)
+    rotate(center, angleDegrees, counterClockwise = true) {
+
+        expect(Vector, center)
 
         const rotation = angleDegrees * (counterClockwise ? -1 : 1)
         const rotationRadians = Radians(rotation)
@@ -63,15 +67,15 @@ class Vector {
         const sin = Math.sin(rotationRadians)
         
         return new Vector(
-            centerVector.x + this.x * cos - this.y * sin,
-            centerVector.y + this.x * sin + this.y * cos
+            center.x + this.x * cos - this.y * sin,
+            center.y + this.x * sin + this.y * cos
         )
 
     }
 
-    dot(otherVector) {
-        expect(Vector, otherVector)
-        const result = this.x * otherVector.x + this.y * otherVector.y
+    dot(other) {
+        expect(Vector, other)
+        const result = this.x * other.x + this.y * other.y
         return result
     }
 
@@ -82,13 +86,13 @@ class Vector {
 
     normalize() {
 
-        const length = Math.hypot(this.x, this.y)
+        const magnitude = this.magnitude()
 
-        if (length === 0) {
+        if (magnitude === 0) {
             return new Vector(0, 0)
         }
 
-        const normal = new Vector(this.x / length, this.y / length)
+        const normal = new Vector(this.x / magnitude, this.y / magnitude)
 
         return normal
 

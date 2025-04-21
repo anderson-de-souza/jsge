@@ -4,36 +4,36 @@ import Vector from '../../util/vector.js'
 
 class Shape {
 
-    #centerVector = new Vector(0, 0)
+    #center = new Vector(0, 0)
 
     #width = 0
     #height = 0
 
-    #axisAngle = 90
+    #rotationAngle = 90
     #counterClockwise = true
 
-    get centerVector() {
-        return this.#centerVector
+    get center() {
+        return this.#center
     }
 
-    set centerVector(value) {
-        this.#centerVector = expect(Vector, value)
+    set center(value) {
+        this.#center = expect(Vector, value)
     }
 
     get centerX() {
-        return this.centerVector.x
+        return this.center.x
     }
 
     set centerX(value) {
-        this.centerVector.x = expect('number', value)
+        this.center.x = expect('number', value)
     }
 
     get centerY() {
-        return this.centerVector.y
+        return this.center.y
     }
 
     set centerY(value) {
-        this.centerVector.y = expect('number', value)
+        this.center.y = expect('number', value)
     }
 
     get width() {
@@ -60,16 +60,16 @@ class Shape {
         return this.#height / 2
     }
 
-    get axisAngle() {
-        return this.#axisAngle
+    get rotationAngle() {
+        return this.#rotationAngle
     }
 
-    set axisAngle(value) {
-        this.#axisAngle = expect('number', value)
+    set rotationAngle(value) {
+        this.#rotationAngle = expect('number', value)
     }
 
-    get axisAngleRadians() {
-        return Radians(this.#axisAngle)
+    get rotationAngleRadians() {
+        return Radians(this.#rotationAngle)
     }
 
     get counterClockwise() {
@@ -80,7 +80,7 @@ class Shape {
         this.#counterClockwise = expect('boolean', value)
     }
 
-    rotateAxis() {
+    rotate() {
         throw new Error('getDrawingPath must be implemented by subclasses of Shape.')
     }
 

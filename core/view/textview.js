@@ -1,5 +1,6 @@
 import expect from '../../util/expect.js'
 import Rectangle from '../shape/rectangle.js'
+import textViewDefaultStyle from './json/text-view-default-style.js'
 import View from './view.js'
 
 class TextView extends View {
@@ -7,26 +8,20 @@ class TextView extends View {
     
     constructor(context, shape = new Rectangle()) {
         super(context, expect(Rectangle, shape))
+        this.style = textViewDefaultStyle
         this.content = ''
-        this.style = {
-            ...this.style,
-            color: 'transparent',
-            fontColor: 'black',
-            fontFamily: 'Arial',
-            fontSize: 32,
-            fontStyle: 'normal',
-            textBaseline: 'top',
-        }
     }
 
     updateFontStyle() {
-        this.context.fillStyle = this.style.fontColor
+        this.context.fillStyle = this.style.textColor
         this.context.font = `${ this.style.fontStyle } ${ this.style.fontSize }px ${ this.style.fontFamily }`
         this.context.textBaseline = this.style.textBaseline
     }
 
     get textMetrics() {
-        return this.context.measureText(this.content)
+        this.updateFontStyle()
+        const metrics = this.context.measureText(this.content)
+        return metrics
     }
 
     get textWidth() {
@@ -38,7 +33,6 @@ class TextView extends View {
     }
 
     resize() {
-        this.updateFontStyle()
         this.shape.width = this.textWidth
         this.shape.height = this.textHeight
     }

@@ -2,6 +2,7 @@ import expect from '../../util/expect.js'
 import ContextProxy from '../contextproxy.js'
 import Rectangle from '../shape/rectangle.js'
 import Shape from '../shape/shape.js'
+import viewDefaultStyle from './json/view-default-style.js'
 
 class View {
 
@@ -12,11 +13,7 @@ class View {
     constructor(context, shape = new Rectangle()) {
         this.context = context
         this.shape = shape
-        this.style = { 
-            color: 'black',
-            filled: true,
-            visible: true 
-        }
+        this.style = viewDefaultStyle
     }
 
     get context() {
@@ -51,12 +48,13 @@ class View {
 
             if (this.style.filled) {
 
-                this.context.fillStyle = this.style.color || 'black' 
+                this.context.fillStyle = this.style.fillColor
                 this.context.fill(path)
 
             } else {
 
-                this.context.strokeStyle = this.style.color || 'black'
+                this.context.strokeStyle = this.style.strokeColor
+                this.context.lineWidth = this.style.lineWidth
                 this.context.stroke(path)
                 
             }
