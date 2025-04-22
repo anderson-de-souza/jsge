@@ -1,5 +1,4 @@
 import expect from '../../util/expect.js'
-import ContextProxy from '../contextproxy.js'
 import Rectangle from '../shape/rectangle.js'
 import Shape from '../shape/shape.js'
 import viewDefaultStyle from './json/view-default-style.js'
@@ -21,7 +20,7 @@ class View {
     }
     
     set context(value) {
-        this.#context = expect(ContextProxy, value)
+        this.#context = expect(CanvasRenderingContext2D, value)
     }
     
     get shape() {
@@ -37,7 +36,7 @@ class View {
     }
     
     set style(value) {
-        this.#style = value
+        this.#style = { ...value }
     }
 
     draw() {

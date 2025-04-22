@@ -56,19 +56,16 @@ class Vector {
         return new Vector(this.x * scaleX, this.y * scaleY)
     }
 
-    rotate(center, angleDegrees, counterClockwise = true) {
+    rotate(angleDegrees, counterClockwise = true) {
 
-        expect(Vector, center)
-
-        const rotation = angleDegrees * (counterClockwise ? -1 : 1)
-        const rotationRadians = Radians(rotation)
-
-        const cos = Math.cos(rotationRadians)
-        const sin = Math.sin(rotationRadians)
+        const rotation = Radians(angleDegrees * (counterClockwise ? -1 : 1))
+        
+        const cos = Math.cos(rotation)
+        const sin = Math.sin(rotation)
         
         return new Vector(
-            center.x + this.x * cos - this.y * sin,
-            center.y + this.x * sin + this.y * cos
+            this.x * cos - this.y * sin,
+            this.x * sin + this.y * cos
         )
 
     }

@@ -1,4 +1,0 @@
-
-function isCollided(obj, obst) {
-
-}

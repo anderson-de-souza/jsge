@@ -1,7 +1,6 @@
 import expect from '../util/expect.js'
 import KeyboardInputHandler from '../core/input/keyboardinputhandler.js'
 import MouseInputHandler from '../core/input/mouseinputhandler.js'
-import ContextProxy from '../core/contextproxy.js'
 
 class Player {
 
@@ -20,7 +19,7 @@ class Player {
 
         Player.#instance = this
 
-        this.context = expect(ContextProxy, context)
+        this.context = expect(CanvasRenderingContext2D, context)
 
         this.#cursor = {
             x: 0,

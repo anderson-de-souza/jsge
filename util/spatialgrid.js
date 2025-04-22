@@ -6,11 +6,13 @@ class SpatialGrid {
     }
     
     generateKey(x, y) {
-        return `${Math.floor(x / this.cellSize)},${Math.floor(y / this.cellSize)}`
+        return `${ Math.floor(x / this.cellSize) },${ Math.floor(y / this.cellSize) }`
     }
 
     generateKeys(body) {
+
         const keys = new Set()
+        
         const startX = Math.floor(body.left / this.cellSize)
         const startY = Math.floor(body.top / this.cellSize)
         const endX = Math.floor(body.right / this.cellSize)

@@ -1,4 +1,4 @@
-import EventRegisterer from './eventregisterer.js'
+import EventRegisterer from '../../util/eventregisterer.js'
 
 class MouseInputHandler {
 
