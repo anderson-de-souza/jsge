@@ -57,7 +57,7 @@ const expect = (function() {
             throw new Error(`"${ actual }" is not a "${ expected }", but got "${ field.toString() }"`)
         }
 
-        return null
+        return undefined
         
     }
     
