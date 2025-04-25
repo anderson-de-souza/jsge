@@ -57,7 +57,7 @@ class Polygon extends Shape {
         
         this.#localCorners = new Array(this.edgeCount)
 
-        for (let i = 0; i < this.#localCorners.length; i++) {
+        for (let i = 0; i < this.edgeCount; i++) {
 
             const angle = i * angleStep
             this.#localCorners[i] = new Vector(this.radius * Math.cos(angle),this.radius * Math.sin(angle))
@@ -90,17 +90,17 @@ class Polygon extends Shape {
         return this.getRotatedCorners().map(corner => corner.add(this.center))
     }
     
-    getGlobalEdges(transform = true) {
+    getGlobalEdges(rotate = true) {
         
         if (this.#globalEdges) {
             return this.#globalEdges
         }
         
-        const corners = transform ? this.getGlobalRotatedCorners(): this.getGlobalCorners()
+        const corners = rotate ? this.getGlobalRotatedCorners(): this.getGlobalCorners()
         
         this.#globalEdges = new Array(this.edgeCount)
         
-        for (let i = 0; i < corners.length; i++) {
+        for (let i = 0; i < this.edgeCount; i++) {
             let corner = corners[i]
             let nextCorner = corners[(i + 1) % corners.length]
             this.#globalEdges[i] = new Vector(nextCorner.x - corner.x, nextCorner.y - corner.y)
@@ -110,17 +110,17 @@ class Polygon extends Shape {
         
     }
     
-    getGlobalAxes(transform = true) {
+    getGlobalAxes(rotate = true) {
         
         if (this.#globalAxes) {
             return this.#globalAxes
         }
         
-        const edges = this.getGlobalEdges(transform)
+        const edges = this.getGlobalEdges(rotate)
         
         this.#globalAxes = new Array(this.edgeCount)
         
-        for (let i = 0; i < edges.length; i++) {
+        for (let i = 0; i < this.edgeCount; i++) {
             this.#globalAxes[i] = edges[i].perpendicular().normalize()
         }
         
@@ -134,7 +134,7 @@ class Polygon extends Shape {
 
         const globalCorners = transform ? this.getGlobalRotatedCorners(): this.getGlobalCorners()
 
-        for (let i = 0; i < globalCorners.length; i++) {
+        for (let i = 0; i < this.edgeCount; i++) {
 
             if (i === 0) {
                 path.moveTo(globalCorners[i].x, globalCorners[i].y)
