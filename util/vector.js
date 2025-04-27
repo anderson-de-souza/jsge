@@ -29,24 +29,20 @@ class Vector {
     }
 
     add(other) {
-        expect(Vector, other)
-        const result = new Vector(this.x + other.x, this.y + other.y)
-        return result
+        return new Vector(this.x + expect(Vector, other).x, this.y + other.y)
     }
 
     subtract(other) {
-        expect(Vector, other)
-        const result = new Vector(this.x - other.x, this.y - other.y)
-        return result
+        return new Vector(this.x - expect(Vector, other).x, this.y - other.y)
     }
 
-    scale(scaleX, scaleY) {
-        return new Vector(this.x * scaleX, this.y * scaleY)
+    scale(scaleX, scaleY = scaleX) {
+        return new Vector(this.x * expect('number', scaleX), this.y * expect('number', scaleY))
     }
 
     rotate(angleDegrees, counterClockwise = true) {
 
-        const rotation = Radians(angleDegrees * (counterClockwise ? -1 : 1))
+        const rotation = Radians(counterClockwise ? angleDegrees : -angleDegrees)
         
         const cos = Math.cos(rotation)
         const sin = Math.sin(rotation)
@@ -59,19 +55,15 @@ class Vector {
     }
 
     dot(other) {
-        expect(Vector, other)
-        const result = this.x * other.x + this.y * other.y
-        return result
+        return this.x * expect(Vector, other).x + this.y * other.y
     }
     
     reverse() {
-        const result = new Vector(-this.x, -this.y)
-        return result
+        return new Vector(-this.x, -this.y)
     }
 
     perpendicular() {
-        const result = new Vector(-this.y, this.x)
-        return result
+        return new Vector(-this.y, this.x)
     }
 
     normalize() {
@@ -82,9 +74,7 @@ class Vector {
             return new Vector(0, 0)
         }
 
-        const normal = new Vector(this.x / magnitude, this.y / magnitude)
-
-        return normal
+        return new Vector(this.x / magnitude, this.y / magnitude)
 
     }
 
@@ -96,13 +86,16 @@ class Vector {
         return `(${ this.x.toFixed(precision) }, ${ this.y.toFixed(precision) })`
     }
     
+    equals(other) {
+        return this.x === expect(Vector, other).x && this.y === other.y
+    }
+    
     magnitude() {
         return Math.hypot(this.x, this.y)
     }
     
     angle() {
-        const rad = Math.atan2(this.y, this.x)
-        return Degrees(rad)
+        return Degrees(Math.atan2(this.y, this.x))
     }    
 
 }
