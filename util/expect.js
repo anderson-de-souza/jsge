@@ -4,6 +4,7 @@ const expect = (function() {
         'bigint',
         'boolean',
         'function',
+        'nan',
         'null',
         'number',
         'object',
@@ -18,6 +19,8 @@ const expect = (function() {
         
         if (type === null) {
             expected = 'null'
+        } else if (Number.isNaN(type)) {
+            expected = 'nan'
         } else if (typeof type === 'function' && TYPES.includes(type.name.toLowerCase()) && typeof field !== 'function') {
             expected = type.name.toLowerCase()
         } else if (typeof type === 'function' && typeof field !== 'function') {
@@ -32,6 +35,8 @@ const expect = (function() {
         
         if (field === null) {
             actual = 'null'
+        } else if (Number.isNaN(field)) {
+            actual = 'nan'
         } else if (typeof field === 'function' && !(typeof type === 'string' && TYPES.includes(type)) && typeof type !== 'function') {
             actual = field.name
         } else if (typeof field === 'object' && TYPES.includes(field.constructor.name.toLowerCase())) {

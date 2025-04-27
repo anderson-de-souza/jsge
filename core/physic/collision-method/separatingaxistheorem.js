@@ -67,15 +67,6 @@ class SAT {
             
         }
         
-        const aCenter = a.getCenter()
-        const bCenter = b.getCenter()
-        
-        const direction = bCenter.subtract(aCenter)
-        
-        if (direction.dot(smallestAxis) < 0) {
-            smallestAxis = smallestAxis.reverse()
-        }
-        
         return new Vector(
             smallestAxis.x * smallestOverlap,
             smallestAxis.y * smallestOverlap

@@ -8,14 +8,15 @@ canvas.height = innerHeight
 
 const context = canvas.getContext('2d')
 
-const polygonA = new Polygon(20, 3)
+const polygonA = new Polygon(20, 6)
 polygonA.centerX = 64
 polygonA.centerY = 64
+polygonA.rotationAngle = 45
 
 const polygonB = new Polygon(20, 6)
 polygonB.centerX = 256
 polygonB.centerY = 64
-polygonB.rotationAngle = 180
+polygonB.rotationAngle = 45
 
 function draw(polygon, color = 'green') {
     
@@ -39,6 +40,12 @@ function animate() {
     let mtv = SAT.getMTV(polygonA, polygonB)
     
     if (mtv) {
+        
+        const direction = polygonB.getCenter().subtract(polygonA.getCenter())
+        
+        if (direction.dot(mtv) < 0) {
+            mtv = mtv.reverse()
+        }
         
         polygonB.setCenter(
             polygonB.getCenter().add(mtv)
