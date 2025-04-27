@@ -5,33 +5,12 @@ import Shape from './shape.js'
 
 class Polygon extends Shape {
 
-    #radius
     #edgeCount
-    #localCorners
-    #rotatedCorners
-    #globalEdges
-    #globalAxes
 
     constructor(radius, edgeCount = 3) {
         super()
         this.radius = radius
         this.edgeCount = edgeCount
-    }
-    
-    #clearCache() {
-        this.#localCorners = null
-        this.#rotatedCorners = null
-        this.#globalEdges = null
-        this.#globalAxes = null
-    }
-
-    get radius() {
-        return this.#radius
-    }
-
-    set radius(value) {
-        this.#radius = expect('number', value)
-        this.#clearCache()
     }
 
     get edgeCount() {
@@ -44,104 +23,81 @@ class Polygon extends Shape {
             throw new Error('Polygon needs to have at least 3 edges')
         }
         this.#edgeCount = value
-        this.#clearCache()
     }
     
-    getLocalCorners() {
-
-        if (this.#localCorners) {
-            return this.#localCorners
-        }
+    getCorners() {
         
         const angleStep = Radians(360) / this.edgeCount
         
-        this.#localCorners = new Array(this.edgeCount)
+        const corners = new Array(this.edgeCount)
 
         for (let i = 0; i < this.edgeCount; i++) {
 
             const angle = i * angleStep
-            this.#localCorners[i] = new Vector(this.radius * Math.cos(angle),this.radius * Math.sin(angle))
+            corners[i] = new Vector(
+                    this.radius * Math.cos(angle),
+                    this.radius * Math.sin(angle)
+                ).rotate(
+                        this.rotationAngle, 
+                        this.counterClockwise
+                    ).add(new Vector(
+                                this.centerX,
+                                this.centerY
+                            ))
 
         }
 
-        return this.#localCorners
+        return corners
 
-    }
-
-    getRotatedCorners() {
-        
-        if (this.#rotatedCorners) {
-            return this.#rotatedCorners
-        }
-        
-        this.#rotatedCorners = this.getLocalCorners().map(corner => 
-            corner.rotate(this.rotationAngle, this.counterClockwise)
-        )
-        
-        return this.#rotatedCorners
-        
-    }
-
-    getGlobalCorners() {
-        return this.getLocalCorners().map(corner => corner.add(this.center))
     }
     
-    getGlobalRotatedCorners() {
-        return this.getRotatedCorners().map(corner => corner.add(this.center))
-    }
-    
-    getGlobalEdges(rotate = true) {
+    getEdges() {
         
-        if (this.#globalEdges) {
-            return this.#globalEdges
-        }
+        const corners = this.getCorners()
         
-        const corners = rotate ? this.getGlobalRotatedCorners(): this.getGlobalCorners()
-        
-        this.#globalEdges = new Array(this.edgeCount)
+        const edges = new Array(this.edgeCount)
         
         for (let i = 0; i < this.edgeCount; i++) {
-            let corner = corners[i]
-            let nextCorner = corners[(i + 1) % corners.length]
-            this.#globalEdges[i] = new Vector(nextCorner.x - corner.x, nextCorner.y - corner.y)
+            const corner = corners[i]
+            const nextCorner = corners[(i + 1) % corners.length]
+            edges[i] = new Vector(
+                    nextCorner.x - corner.x, 
+                    nextCorner.y - corner.y
+                )
         }
         
-        return this.#globalEdges
+        return edges
         
     }
     
-    getGlobalAxes(rotate = true) {
+    getAxes() {
         
-        if (this.#globalAxes) {
-            return this.#globalAxes
-        }
+        const edges = this.getEdges()
         
-        const edges = this.getGlobalEdges(rotate)
-        
-        this.#globalAxes = new Array(this.edgeCount)
+        const axes = new Array(this.edgeCount)
         
         for (let i = 0; i < this.edgeCount; i++) {
-            this.#globalAxes[i] = edges[i].perpendicular().normalize()
+            axes[i] = edges[i].perpendicular().normalize()
         }
         
-        return this.#globalAxes
+        return axes
         
     }
 
-    getDrawingPath(transform = true) {
+    getDrawingPath() {
 
         const path = new Path2D()
 
-        const globalCorners = transform ? this.getGlobalRotatedCorners(): this.getGlobalCorners()
+        const corners = this.getCorners()
 
         for (let i = 0; i < this.edgeCount; i++) {
 
             if (i === 0) {
-                path.moveTo(globalCorners[i].x, globalCorners[i].y)
+                path.moveTo(corners[i].x, corners[i].y)
                 continue
             }
 
-            path.lineTo(globalCorners[i].x, globalCorners[i].y)
+            path.lineTo(corners[i].x, corners[i].y)
 
         }
 

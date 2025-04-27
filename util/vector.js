@@ -2,24 +2,12 @@ import Degrees from './degrees.js'
 import expect from './expect.js'
 import Radians from './radians.js'
 
-/*
- * Um vetor em 2D pode ser interpretado como uma seta (reta orientada) que vai da origem (0, 0)
- * até o ponto (x, y) no plano cartesiano. Ele representa tanto uma direção quanto uma magnitude.
- *
- * Por exemplo, o vetor (3, 4) aponta da origem até o ponto (3, 4), e sua magnitude é 5,
- * calculada com o Teorema de Pitágoras: sqrt(3² + 4²) = 5.
- * 
- * Math.atan2(y, x) retorna o ângulo que esse vetor forma com o eixo X, em radianos.
- * 
- */
-
-
 class Vector {
 
     #x = 0
     #y = 0
 
-    constructor(x, y) {
+    constructor(x = 0, y = 0) {
         this.x = x
         this.y = y
     }
@@ -73,6 +61,11 @@ class Vector {
     dot(other) {
         expect(Vector, other)
         const result = this.x * other.x + this.y * other.y
+        return result
+    }
+    
+    reverse() {
+        const result = new Vector(-this.x, -this.y)
         return result
     }
 
