@@ -1,110 +1,23 @@
-import Shape from './shape.js'
-import Radians from '../../util/radians.js'
 import expect from '../../util/expect.js'
+import Polygon from './polygon.js'
 
-class Circle extends Shape {
+class Circle extends Polygon {
 
-    #radius
-    #startAngle
-    #endAngle
-    #closeDrawing
-
-    constructor(radius = 0) {
-        super()
-        this.x = 0
-        this.y = 0
-        this.radius = radius
-        this.startAngle = 0
-        this.endAngle = 360
-        this.closeDrawing = true
-    }
-
-    get radius() {
-        return this.#radius
-    }
-
-    set radius(value) {
-        this.#radius = expect('number', value)
-    }
-
-    get startAngle() {
-        return this.#startAngle
-    }
-
-    set startAngle(value) {
-        this.#startAngle = expect('number', value)
-    }
-
-    get startAngleRadians() {
-        return Radians(this.#startAngle)
-    }
-
-    get endAngle() {
-        return this.#endAngle
-    }
-
-    set endAngle(value) {
-        this.#endAngle = expect('number', value)
-    }
-
-    get endAngleRadians() {
-        return Radians(this.#endAngle)
-    }
-
-    get closeDrawing() {
-        return this.#closeDrawing
-    }
-
-    set closeDrawing(value) {
-        this.#closeDrawing = expect('boolean', value)
-    }
-
-    get diameter() {
-        return this.#radius * 2
-    }
-
-    set width(value) {
-        expect('number', value)
-        super.width = value 
-        this.radius = (value + super.height) / 4
+    constructor(radius) {
+        super(radius, 36)
     }
     
-    set height(value) {
-        expect('number', value)
-        super.height = value
-        this.radius = (value + super.width) / 4
-    }    
-
-    get width() {
-        return this.diameter
-    }
-    
-    get height() {
-        return this.diameter
-    }
-    
-    rotateAxis() {
-        const rotation = this.rotationAngle + (this.counterClockwise ? -90: 90)
-        this.startAngle -= rotation
-        this.endAngle -= rotation
+    get edgeCount() {
+        return super.edgeCount
     }
 
-    getDrawingPath() {
-
-        this.rotate()
-
-        const path = new Path2D()
-
-        path.arc(this.x, this.y, this.radius, this.startAngleRadians, this.endAngleRadians, this.counterClockwise)
-        
-        if (this.closeDrawing) {
-            path.closePath() 
+    set edgeCount(value) {
+        if (expect('number', value) < 36) {
+            throw new Error('Circle needs to have at least 36 edges')
         }
-
-        return path
-
+        super.edgeCount = value
     }
-
+    
 }
 
 export default Circle

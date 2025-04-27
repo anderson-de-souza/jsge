@@ -1,67 +1,43 @@
 import expect from '../../util/expect.js'
+import Polygon from './polygon.js'
 import Vector from '../../util/vector.js'
-import Shape from './shape.js'
 
-class Rectangle extends Shape {
-
-    #corners
+class Rectangle extends Polygon {
 
     constructor(width = 0, height = 0) {
-        super()
-        this.centerX = 0
-        this.centerY = 0 
+        super(width / 2, 4)
         this.width = width
         this.height = height
-        this.corners = this.originCorners
+    }
+    
+    get edgeCount() {
+        return super.edgeCount
     }
 
-    get originCorners() {
-        return [
+    set edgeCount(value) {
+        if (expect('number', value) !== 4) {
+            throw new Error('Rectangle needs to have 4 edges')
+        }
+        super.edgeCount = value
+    }
+
+    getCorners() {
+        
+        const corners = [
             new Vector(-this.halfWidth, -this.halfHeight),
             new Vector( this.halfWidth, -this.halfHeight),
             new Vector( this.halfWidth,  this.halfHeight),
             new Vector(-this.halfWidth,  this.halfHeight)
-        ]
-    }
-
-    get corners() {
-        return this.#corners
-    }
-
-    set corners(value) {
-        expect(Array, value)
-        if (value.length !== 4) {
-            throw new Error('value.length must be equals to 4')
-        }
-        this.#corners = value
-    }
-    
-    rotate() {
-
-        const rotation = this.rotationAngle + (this.counterClockwise ? -90 : 90)
-
-        this.corners = this.originCorners.map(corner => 
-            corner.rotate(this.center, rotation, this.counterClockwise)
-        )
-
-    }
-
-    getDrawingPath() {
+        ].map(corner =>
+                corner.rotate(this.rotationAngle, this.counterClockwise)
+                    .add(new Vector(
+                            this.centerX,
+                            this.centerY
+                        ))
+            )
+            
+        return corners
         
-        this.rotate()
-
-        const path = new Path2D()
-
-        path.moveTo(this.corners[0].x, this.corners[0].y)
-
-        for (let i = 1; i < this.corners.length; i++) {
-            path.lineTo(this.corners[i].x, this.corners[i].y)
-        }
-
-        path.lineTo(this.corners[0].x, this.corners[0].y)
-
-        return path
-
     }
     
 }

@@ -9,9 +9,6 @@ class Shape {
     
     #radius
     
-    #x
-    #y
-    
     #width
     #height
 
@@ -25,14 +22,12 @@ class Shape {
         
         this.#radius = 0
         
-        this.#x = 0
-        this.#y = 0
-        
         this.#width = 0
         this.#height = 0
         
         this.#rotationAngle = 90
         this.#counterClockwise = true
+        
     }
 
     get centerX() {
@@ -59,8 +54,7 @@ class Shape {
     }
     
     setCenter(vector) {
-        expect(Vector, vector)
-        this.centerX = vector.x
+        this.centerX = expect(Vector, vector).x
         this.centerY = vector.y
     }
     
@@ -74,22 +68,6 @@ class Shape {
     
     get diameter() {
         return this.#radius * 2
-    }
-    
-    get x() {
-        return this.#x
-    }
-
-    set x(value) {
-        this.#x = expect('number', value)
-    }
-
-    get y() {
-        return this.#y
-    }
-
-    set y(value) {
-        this.#y = expect('number', value)
     }
     
     get width() {
@@ -122,10 +100,6 @@ class Shape {
 
     set rotationAngle(value) {
         this.#rotationAngle = expect('number', value)
-    }
-
-    get rotationAngleRadians() {
-        return Radians(this.#rotationAngle)
     }
 
     get counterClockwise() {

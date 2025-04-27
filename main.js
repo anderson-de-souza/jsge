@@ -1,4 +1,6 @@
-import Polygon from './core/shape/Polygon.js'
+import Circle from './core/shape/circle.js'
+import Polygon from './core/shape/polygon.js'
+import Rectangle from './core/shape/rectangle.js'
 import SAT from './core/physic/collision-method/separatingaxistheorem.js'
 import Vector from './util/vector.js'
 
@@ -8,12 +10,12 @@ canvas.height = innerHeight
 
 const context = canvas.getContext('2d')
 
-const polygonA = new Polygon(20, 6)
+const polygonA = new Rectangle(20, 50)
 polygonA.centerX = 64
 polygonA.centerY = 64
 polygonA.rotationAngle = 45
 
-const polygonB = new Polygon(20, 6)
+const polygonB = new Circle(20)
 polygonB.centerX = 256
 polygonB.centerY = 64
 polygonB.rotationAngle = 45

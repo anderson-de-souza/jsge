@@ -7,7 +7,7 @@ class Polygon extends Shape {
 
     #edgeCount
 
-    constructor(radius, edgeCount = 3) {
+    constructor(radius = 0, edgeCount = 3) {
         super()
         this.radius = radius
         this.edgeCount = edgeCount
