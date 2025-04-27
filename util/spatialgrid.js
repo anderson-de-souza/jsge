@@ -1,84 +1,89 @@
+import expect from './expect.js'
+import Shape from '../../core/shape/shape.js';
+import Vector from './vector.js'
+
 class SpatialGrid {
+    
+    #cellSize
+    #grid
     
     constructor(cellSize) {
         this.cellSize = cellSize
-        this.grid = new Map()
+        this.#grid = new Map()
     }
     
-    generateKey(x, y) {
-        return `${ Math.floor(x / this.cellSize) },${ Math.floor(y / this.cellSize) }`
+    get cellSize() {
+        return this.#cellSize
+    }
+    
+    set cellSize(value) {
+        this.#cellSize = expect('number', value)
+    }
+    
+    generateKey(vector) {
+        return `${ Math.floor(expect(Vector, vector).x / this.cellSize) },${ Math.floor(vector.y / this.cellSize) }`
     }
 
-    generateKeys(body) {
-
-        const keys = new Set()
+    findCell(vector, autoCreate = false) {
+        const key = this.generateKey(vector)
+        const cell = this.#grid.get(key)
         
-        const startX = Math.floor(body.left / this.cellSize)
-        const startY = Math.floor(body.top / this.cellSize)
-        const endX = Math.floor(body.right / this.cellSize)
-        const endY = Math.floor(body.bottom / this.cellSize)
-        for (let x = startX; x <= endX; x++) {
-            for (let y = startY; y <= endY; y++) {
-                keys.add(`${x},${y}`)
-            }
-        }
-        return keys
-    }
-    
-    findCell(x, y, autoCreate = false) {
-        const key = this.generateKey(x, y)
-        let cell = this.grid.get(key)
         if (!cell && autoCreate) {
             cell = new Set()
-            this.grid.set(key, cell)
+            this.#grid.set(key, cell)
         }
+        
         return cell
+        
     }
     
-    removeEmptyCell(x, y) {
-        const key = this.generateKey(x, y)
-        const cell = this.grid.get(key)
+    removeEmptyCell(vector) {
+        const cell = this.findCell(vector)
         if (cell?.size === 0) {
-            this.grid.delete(key)
+            this.#grid.delete(
+                    this.generateKey(vector)
+                )
         }
     }
 
-    addBody(body) {
-        this.generateKeys(body).forEach(key => {
-            let cell = this.grid.get(key)
-            if (!cell) {
-                cell = new Set()
-                this.grid.set(key, cell)
-            }
-            cell.add(body)
-        })
+    add(object) {
+        const corners = expect(Shape, object).getCorners()
+        for (const corner of corners) {
+            const cell = this.findCell(corner, true)
+            cell.add(object)
+        }
     }
 
-    removeBody(body) {
-        this.generateKeys(body).forEach(key => {
-            const cell = this.grid.get(key)
+    remove(object) {
+        const corners = expect(Shape, object).getCorners()
+        for (const corner of corners) {
+            const cell = this.findCell(corner)
             if (cell) {
-                cell.delete(body)
+                cell.delete(object)
                 if (cell.size === 0) {
-                    this.grid.delete(key)
+                    this.removeEmptyCell(corner)
                 }
             }
-        })
+        }
     }
 
-    findNearbyBodies(body) {
-        const nearbyBodies = new Set()
-        this.generateKeys(body).forEach(key => {
-            const cell = this.grid.get(key)
+    findNearby(object) {
+        const objects = new Set()
+        const corners = expect(Shape, object).getCorners()
+        
+        for (const corner of corners) {
+            const cell = this.findCell(corner)
             if (cell) {
-                cell.forEach(cellChild => {
-                    if (cellChild !== body) {
-                        nearbyBodies.add(cellChild)
+                for (const child of cell) {
+                    if (child !== object) {
+                        objects.add(child)
                     }
-                })
+                }
             }
-        })
-        return nearbyBodies
+        }
+        
+        return objects
+        
     }
 
 }

@@ -13,7 +13,7 @@ class Shape {
     #height
 
     #rotationAngle
-    #counterClockwise
+    #anticlockwise
     
     constructor() {
         
@@ -26,7 +26,7 @@ class Shape {
         this.#height = 0
         
         this.#rotationAngle = 90
-        this.#counterClockwise = true
+        this.#anticlockwise = true
         
     }
 
@@ -102,12 +102,24 @@ class Shape {
         this.#rotationAngle = expect('number', value)
     }
 
-    get counterClockwise() {
-        return this.#counterClockwise
+    get anticlockwise() {
+        return this.#anticlockwise
     }
 
-    set counterClockwise(value) {
-        this.#counterClockwise = expect('boolean', value)
+    set anticlockwise(value) {
+        this.#anticlockwise = expect('boolean', value)
+    }
+    
+    getCorners() {
+        throw new Error('getCorners must be implemented by subclasses of Shape.')
+    }
+    
+    getEdges() {
+        throw new Error('getEdges must be implemented by subclasses of Shape.')
+    }
+    
+    getAxes() {
+        throw new Error('getAxes must be implemented by subclasses of Shape.')
     }
 
     getDrawingPath(context) {

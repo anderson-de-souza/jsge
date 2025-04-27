@@ -29,7 +29,7 @@ class Rectangle extends Polygon {
             new Vector( this.halfWidth,  this.halfHeight),
             new Vector(-this.halfWidth,  this.halfHeight)
         ].map(corner =>
-                corner.rotate(this.rotationAngle, this.counterClockwise)
+                corner.rotate(this.rotationAngle, this.anticlockwise)
                     .add(new Vector(
                             this.centerX,
                             this.centerY

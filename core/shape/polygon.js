@@ -39,7 +39,7 @@ class Polygon extends Shape {
                     this.radius * Math.sin(angle)
                 ).rotate(
                         this.rotationAngle, 
-                        this.counterClockwise
+                        this.anticlockwise
                     ).add(new Vector(
                                 this.centerX,
                                 this.centerY

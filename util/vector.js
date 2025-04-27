@@ -40,9 +40,9 @@ class Vector {
         return new Vector(this.x * expect('number', scaleX), this.y * expect('number', scaleY))
     }
 
-    rotate(angleDegrees, counterClockwise = true) {
+    rotate(angleDegrees, anticlockwise = true) {
 
-        const rotation = Radians(counterClockwise ? angleDegrees : -angleDegrees)
+        const rotation = Radians(anticlockwise ? angleDegrees : -angleDegrees)
         
         const cos = Math.cos(rotation)
         const sin = Math.sin(rotation)
