@@ -20,14 +20,37 @@ class SpatialGrid {
         this.#cellSize = expect('number', value)
     }
     
-    generateKey(vector) {
-        return `${ Math.floor(expect(Vector, vector).x / this.cellSize) },${ Math.floor(vector.y / this.cellSize) }`
+    generateKey(x, y) {
+        return `${ Math.floor(expect('number', x) / this.cellSize) },${ Math.floor(expect('number', y) / this.cellSize) }`
+    }
+    
+    generateKeys(shape) {
+        shape = expect(Shape, shape)
+        
+        const box = shape.getBoundingBox()
+        
+        const startX = Math.floor(box.x / this.cellSize)
+        const startY = Math.floor(box.y / this.cellSize)
+        
+        const endX = Math.floor((box.x + box.width) / this.cellSize)
+        const endY = Math.floor((box.y + box.height) / this.cellSize)
+        
+        const keys = new Set()
+    
+        for (let cellX = startX; cellX < endX; cellX++) {
+            for (let cellY = startY; cellY < endY; cellY++) {
+                keys.add(`${ cellX },${ cellY }`)
+            }
+        }
+        
+        return keys
+        
     }
 
-    findCell(vector, autoCreate = false) {
-        const key = this.generateKey(vector)
-        const cell = this.#grid.get(key)
+    findCell(x, y, autoCreate = false) {
+        const key = this.generateKey(x, y)
         
+        let cell = this.#grid.get(key)
         if (!cell && autoCreate) {
             cell = new Set()
             this.#grid.set(key, cell)
@@ -37,52 +60,65 @@ class SpatialGrid {
         
     }
     
-    removeEmptyCell(vector) {
-        const cell = this.findCell(vector)
+    removeEmptyCell(x, y) {
+        const key = this.generateKey(x, y)
+        const cell = this.#grid.get(key)
         if (cell?.size === 0) {
-            this.#grid.delete(
-                    this.generateKey(vector)
-                )
+            this.#grid.delete(key)
         }
     }
 
-    add(object) {
-        const corners = expect(Shape, object).getCorners()
-        for (const corner of corners) {
-            const cell = this.findCell(corner, true)
-            cell.add(object)
+    add(shape) {
+        for (const key of this.generateKeys(shape)) {
+            let cell = this.#grid.get(key)
+            if (!cell) {
+                cell = new Set()
+                this.#grid.set(key, cell)
+            }
+            cell.add(shape)
         }
     }
 
-    remove(object) {
-        const corners = expect(Shape, object).getCorners()
-        for (const corner of corners) {
-            const cell = this.findCell(corner)
+    remove(shape) {
+        for (const key of this.generateKeys(shape)) {
+            const cell = this.#grid.get(key)
             if (cell) {
-                cell.delete(object)
+                cell.delete(shape)
                 if (cell.size === 0) {
-                    this.removeEmptyCell(corner)
+                    this.#grid.delete(key)
                 }
             }
         }
     }
 
-    findNearby(object) {
-        const objects = new Set()
-        const corners = expect(Shape, object).getCorners()
+    findAround(shape, range = 1) {
         
-        for (const corner of corners) {
-            const cell = this.findCell(corner)
-            if (cell) {
-                for (const child of cell) {
-                    if (child !== object) {
-                        objects.add(child)
+        const around = new Set()
+        
+        const box = shape.getBoundingBox()
+        
+        const startX = Math.floor(box.x / this.cellSize) - range
+        const startY = Math.floor(box.y / this.cellSize) - range
+        
+        const endX = Math.floor((box.x + box.width) / this.cellSize) + range
+        const endY = Math.floor((box.y + box.height) / this.cellSize) + range
+        
+        for (let cellX = startX; cellX < endX; cellX++) {
+            for (let cellY = startY; cellY < endY; cellY++) {
+                
+                const cell = this.#grid.get(`${ cellX },${ cellY }`)
+                
+                if (cell) {
+                    for (const child of cell) {
+                        if (child !== shape) {
+                            around.add(child)
+                        }
                     }
                 }
             }
         }
         
-        return objects
+        return around
         
     }
 

@@ -35,8 +35,8 @@ class Polygon extends Shape {
 
             const angle = i * angleStep
             corners[i] = new Vector(
-                    this.radius * Math.cos(angle),
-                    this.radius * Math.sin(angle)
+                    this.halfWidth * Math.cos(angle),
+                    this.halfHeight * Math.sin(angle)
                 ).rotate(
                         this.rotationAngle, 
                         this.anticlockwise

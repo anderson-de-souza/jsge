@@ -13,12 +13,13 @@ const context = canvas.getContext('2d')
 const polygonA = new Rectangle(20, 50)
 polygonA.centerX = 64
 polygonA.centerY = 64
-polygonA.rotationAngle = 45
+polygonA.rotationAngle = 90
 
-const polygonB = new Circle(20)
+const polygonB = new Circle(70)
+polygonB.height = 100
 polygonB.centerX = 256
 polygonB.centerY = 64
-polygonB.rotationAngle = 45
+polygonB.rotationAngle = 136
 
 function draw(polygon, color = 'green') {
     
@@ -26,7 +27,7 @@ function draw(polygon, color = 'green') {
     const path = polygon.getDrawingPath()
 
     context.fillStyle = color
-    context.strokeStyle = 'black'
+    context.strokeStyle = color
     context.lineWidth = 1
     context.stroke(path)
     
@@ -49,8 +50,8 @@ function animate() {
             mtv = mtv.reverse()
         }
         
-        polygonB.setCenter(
-            polygonB.getCenter().add(mtv)
+        polygonA.setCenter(
+            polygonA.getCenter().subtract(mtv)
         )
             
         v = 1
@@ -59,8 +60,13 @@ function animate() {
     
     context.clearRect(0, 0, canvas.width, canvas.height)
     
-    draw(polygonA, 'purple')
-    draw(polygonB)
+    const box = polygonB.getBoundingBox()
+    context.fillStyle = 'green'
+    context.fillRect(box.x, box.y, box.width, box.height)
+
+    draw(polygonA, 'red')
+    
+    draw(polygonB, 'purple')
     
     requestAnimationFrame(animate)
     
