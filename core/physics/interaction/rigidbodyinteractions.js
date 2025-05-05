@@ -68,7 +68,12 @@ export function applySeparation(obj, obst) {
     expect(RigidBody, obj)
     expect(RigidBody, obst)
     
-    const mtv = SAT.getMTV(obj.shape, obst.shape)
+    let mtv = SAT.getMTV(obj.shape, obst.shape)
+    const deltaCenter = obj.getCenter().subtract(obst.getCenter())
+    
+    if (mtv.dot(deltaCenter) < 0) {
+        mtv = mtv.reverse()
+    }
     
     const totalReciprocalMass = 1 / obj.mass + 1 / obst.mass
     

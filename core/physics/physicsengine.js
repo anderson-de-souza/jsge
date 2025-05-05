@@ -64,6 +64,7 @@ class PhysicsEngine {
                 if (mtv) {
                     applyRestitution(obj, obst)
                     applyRotation(obj, obst)
+                    applySeparation(obj, obst)
                 }
                 
             }

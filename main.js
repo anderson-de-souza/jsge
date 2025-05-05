@@ -39,6 +39,7 @@ physicEngine.addBody(body1)
 setTimeout(() => body1.forceX = 5000, 1000)
 
 const rect2 = new Rectangle(50, 50)
+rect2.rotationAngle = 45
 
 rect2.setCenter(new Vector(300, 100))
 

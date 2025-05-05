@@ -119,10 +119,14 @@ class RigidBody {
     }
 
     set mass(value) {
-        if (expect('number', value) <= 0) {
-            throw new Error('mass value needs to be greater than 0')
+        expect('number', value)
+        
+        if (value <= 0 || !Number.isFinite(value)) {
+            throw new Error('mass value must be greater than 0 and finite')
         }
+        
         this.#mass = value
+        
     }
 
     get restitution() {
