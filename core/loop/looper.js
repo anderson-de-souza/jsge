@@ -1,6 +1,17 @@
+import expect from '../../util/expect.js'
+
 class Looper {
     
     static #instance
+    
+    #loopId
+    
+    #callbacks
+    
+    #loopCount
+    #loopInterval
+    
+    #lastTime
     
     constructor() {
 
@@ -9,58 +20,66 @@ class Looper {
         }
         
         Looper.#instance = this
+        
+        this.#loopId = null
 
-        this.callbacks = new Set()
+        this.#callbacks = new Set()
 
-        this.loopCount = 0
-        this.loopInterval = 0
-        this.lastTime = 0
+        this.#loopCount = 0
+        this.#loopInterval = 0
+        
+        this.#lastTime = 0
 
     }
     
-    add(callback) {
-        if (typeof callback === 'function') {
-            this.callbacks.add(callback)
-        } else {
-            console.warn('arg passed is not a function', callback)
-        }
+    get loopInterval() {
+        return this.#loopInterval
     }
     
-    remove(callback) {
+    set loopInterval(value) {
+        this.#loopInterval = expect('number', value)
+    }
+    
+    addCallback(callback) {
+        expect('function', callback)
+        this.#callbacks.add(callback)
+    }
+    
+    removeCallback(callback) {
         this.callbacks.delete(callback)
     }
     
     startLoop() {
-        if (!this.loopId) {
-            this.loop()
+        if (!this.#loopId) {
+            this.#loop()
         }
     }
     
     clearLoop() {
-        if (this.loopId) {
+        if (this.#loopId) {
             cancelAnimationFrame(this.loopId)
-            this.loopId = undefined
+            this.#loopId = null
         }
     }
     
-    loop(timestamp = 0) {
+    #loop(timestamp = 0) {
         
-        if (this.callbacks.size === 0) {
+        if (this.#callbacks.size === 0) {
             this.clearLoop()
             return
         }
         
-        let deltaTime = (timestamp - this.lastTime) / 1000
-        this.lastTime = timestamp
+        let deltaTime = (timestamp - this.#lastTime) / 1000
+        this.#lastTime = timestamp
         
-        this.loopCount++
+        this.#loopCount++
         
-        if (this.loopCount > this.loopInterval) {
-            this.callbacks.forEach(callback => callback(deltaTime))
-            this.loopCount = 0
+        if (this.#loopCount > this.loopInterval) {
+            this.#callbacks.forEach(callback => callback(deltaTime))
+            this.#loopCount = 0
         }
         
-        this.loopId = requestAnimationFrame((timestamp) => this.loop(timestamp))
+        this.#loopId = requestAnimationFrame((timestamp) => this.#loop(timestamp))
         
     }
     

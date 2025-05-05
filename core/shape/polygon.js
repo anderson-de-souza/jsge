@@ -1,5 +1,4 @@
 import expect from '../../util/expect.js'
-import Radians from '../../util/radians.js'
 import Vector from '../../util/vector.js'
 import Shape from './shape.js'
 
@@ -27,7 +26,7 @@ class Polygon extends Shape {
     
     getCorners() {
         
-        const angleStep = Radians(360) / this.edgeCount
+        const angleStep = (2 * Math.PI) / this.edgeCount
         
         const corners = new Array(this.edgeCount)
 

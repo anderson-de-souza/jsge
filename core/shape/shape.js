@@ -1,5 +1,4 @@
 import expect from '../../util/expect.js'
-import Radians from '../../util/radians.js'
 import Vector from '../../util/vector.js'
 
 class Shape {
@@ -26,7 +25,7 @@ class Shape {
         this.#width = 0
         this.#height = 0
         
-        this.#rotationAngle = 90
+        this.#rotationAngle = Math.PI / 2
         this.#anticlockwise = true
         
     }

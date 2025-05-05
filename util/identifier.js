@@ -1,6 +1,11 @@
+import expect from '../../util/expect.js';
+
 class Identifier {
     
     static #instance
+    
+    #maxSize
+    #idSet
     
     constructor() {
 
@@ -10,14 +15,22 @@ class Identifier {
 
         Identifier.#instance = this
 
-        this.maxSize = 64
-        this.idList = new Set()
+        this.#maxSize = 64
+        this.#idSet = new Set()
 
+    }
+    
+    get maxSize() {
+        return this.#maxSize
+    }
+    
+    set maxSize(value) {
+        this.#maxSize = expect('number', value)
     }
     
     generateId() {
         
-        if (this.idList.size >= this.maxSize) {
+        if (this.#idSet.size >= this.maxSize) {
             throw new Error("the maximum number of ids was reached")
         }
         
@@ -25,16 +38,12 @@ class Identifier {
         
         do {
             newId = Math.floor(Math.random() * 1000)
-        } while(this.idList.has(newId))
+        } while(this.#idSet.has(newId))
         
-        this.idList.add(newId)
+        this.#idSet.add(newId)
         
         return newId
         
-    }
-    
-    static destroy() {
-        Identifier.#instance = null
     }
     
     static get instance() {

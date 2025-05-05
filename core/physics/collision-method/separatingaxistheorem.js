@@ -74,20 +74,59 @@ class SAT {
         
     }
     
+    static getInsideCorners(a, b) {
+
+        expect(Polygon, a)
+        expect(Polygon, b)
+        
+        const bAxes = b.getAxes()
+        
+        const aCorners = a.getCorners()
+        const bCorners = b.getCorners()
+        
+        const insideCorners = []
+        
+        for (const corner of aCorners) {
+            
+            let isInside = true
+            
+            inner: for (const bAxis of bAxes) {
+                
+                const [ bMin, bMax ] = SAT.project(bAxis, bCorners)
+                
+                const pointProjection = corner.dot(bAxis)
+                
+                if (pointProjection < bMin || pointProjection > bMax) {
+                    isInside = false
+                    break inner
+                }
+                
+            }
+            
+            if (isInside) {
+                insideCorners.push(corner)
+            }
+            
+        }
+        
+        return insideCorners
+        
+    }
+    
     static project(axis, corners) {
         
         expect(Vector, axis)
         expect(Array, corners)
         
-        let min = Infinity
+        let min =  Infinity
         let max = -Infinity
         
         for (const corner of corners) {
             
-            const scalarProduct = corner.dot(axis)
+            const projection = corner.dot(axis)
             
-            min = Math.min(min, scalarProduct)
-            max = Math.max(max, scalarProduct)
+            min = Math.min(min, projection)
+            max = Math.max(max, projection)
             
         }
         

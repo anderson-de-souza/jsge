@@ -1,12 +1,11 @@
 import expect from '../../util/expect.js'
-import ContextProxy from '../contextproxy.js'
 import View from './view.js'
 
 class ViewRenderer {
     
     #context
     #viewSet = new Set()
-    #clearBefore = false
+    #clearBefore = true
 
     constructor(context) {
         this.context = context
@@ -25,7 +24,7 @@ class ViewRenderer {
     }
 
     set context(value) {
-        this.#context = expect(ContextProxy, value)
+        this.#context = expect(CanvasRenderingContext2D, value)
     }
     
     get viewSet() {

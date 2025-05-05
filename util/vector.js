@@ -1,6 +1,4 @@
-import Degrees from './degrees.js'
 import expect from './expect.js'
-import Radians from './radians.js'
 
 class Vector {
 
@@ -40,9 +38,9 @@ class Vector {
         return new Vector(this.x * expect('number', scaleX), this.y * expect('number', scaleY))
     }
 
-    rotate(angleDegrees, anticlockwise = true) {
+    rotate(angleInRadians, anticlockwise = true) {
 
-        const rotation = Radians(anticlockwise ? angleDegrees : -angleDegrees)
+        const rotation = anticlockwise ? angleInRadians : -angleInRadians
         
         const cos = Math.cos(rotation)
         const sin = Math.sin(rotation)
@@ -95,7 +93,7 @@ class Vector {
     }
     
     angle() {
-        return Degrees(Math.atan2(this.y, this.x))
+        return Math.atan2(this.y, this.x)
     }    
 
 }

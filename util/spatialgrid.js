@@ -1,5 +1,5 @@
 import expect from './expect.js'
-import Shape from '../../core/shape/shape.js';
+import Shape from '../core/shape/shape.js';
 import Vector from './vector.js'
 
 class SpatialGrid {
@@ -37,8 +37,8 @@ class SpatialGrid {
         
         const keys = new Set()
     
-        for (let cellX = startX; cellX < endX; cellX++) {
-            for (let cellY = startY; cellY < endY; cellY++) {
+        for (let cellX = startX; cellX <= endX; cellX++) {
+            for (let cellY = startY; cellY <= endY; cellY++) {
                 keys.add(`${ cellX },${ cellY }`)
             }
         }
@@ -68,7 +68,7 @@ class SpatialGrid {
         }
     }
 
-    add(shape) {
+    addShape(shape) {
         for (const key of this.generateKeys(shape)) {
             let cell = this.#grid.get(key)
             if (!cell) {
@@ -79,7 +79,7 @@ class SpatialGrid {
         }
     }
 
-    remove(shape) {
+    removeShape(shape) {
         for (const key of this.generateKeys(shape)) {
             const cell = this.#grid.get(key)
             if (cell) {
@@ -92,6 +92,8 @@ class SpatialGrid {
     }
 
     findAround(shape, range = 1) {
+        
+        expect(Shape, shape)
         
         const around = new Set()
         

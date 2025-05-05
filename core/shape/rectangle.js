@@ -5,7 +5,7 @@ import Vector from '../../util/vector.js'
 class Rectangle extends Polygon {
 
     constructor(width = 0, height = 0) {
-        super(width / 2, 4)
+        super((width + height) / 4, 4)
         this.width = width
         this.height = height
     }
