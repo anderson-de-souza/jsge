@@ -3,91 +3,102 @@ import RigidBody from '../body/rigidbody.js'
 import SAT from '../collision-method/separatingaxistheorem.js'
 import Vector from '../../../util/vector.js'
 
-export function applyRestitution(obj, obst) {
+export function applyRestitution(a, b) {
+    expect(RigidBody, a)
+    expect(RigidBody, b)
     
-    expect(RigidBody, obj)
-    expect(RigidBody, obst)
-    
-    const direction = obj.getCenter().subtract(obst.getCenter())
+    const direction = a.getCenter().subtract(b.getCenter())
     const directionNormal = direction.normalize()
     
-    const relativeVelocity = obj.getVelocity().subtract(obst.getVelocity())
+    const relativeVelocity = a.getVelocity().subtract(b.getVelocity())
     
     const velocityAlongNormal = relativeVelocity.dot(directionNormal)
     
     if (velocityAlongNormal < 0) {
             
-        const restitution = (obj.restitution + obst.restitution) / 2
-        const totalReciprocalMass = (1 / obj.mass) + (1 / obst.mass)
+        const restitution = (a.restitution + b.restitution) / 2
+        const totalReciprocalMass = (1 / a.mass) + (1 / b.mass)
         const impulseMagnitude = -(1 + restitution) * velocityAlongNormal / totalReciprocalMass
             
         const impulse = directionNormal.scale(impulseMagnitude)
             
-        obj.setVelocity(
-            obj.getVelocity().add(
-                    impulse.scale(1 / obj.mass)
+        a.setVelocity(
+            a.getVelocity().add(
+                    impulse.unscale(a.mass)
                 )
             )
             
-        obst.setVelocity(
-            obst.getVelocity().subtract(
-                    impulse.scale(1 / obst.mass)
+        b.setVelocity(
+            b.getVelocity().subtract(
+                    impulse.unscale(b.mass)
                 )
             )
             
     }
 }
 
-export function applyRotation(obj, obst) {
-    expect(RigidBody, obj)
-    expect(RigidBody, obst)
+export function applyRotation(a, b) {
+    expect(RigidBody, a)
+    expect(RigidBody, b)
     
-    const mtv = SAT.getMTV(obj.shape, obst.shape)
+    const mtv = SAT.getMTV(a.shape, b.shape)
     
-    const contactPoints = SAT.getInsideCorners(obj.shape, obst.shape)
+    const contactPoints = SAT.getInsideCorners(a.shape, b.shape)
     
-    if (contactPoints.length === 0) return
+    if (contactPoints.length > 0) {
     
-    const penetration = contactPoints
-        .reduce((sum, corner) => sum.add(corner), new Vector(0, 0))
-            .scale(1 / contactPoints.length)
-            
-    const penetrationDeepthObj = penetration.add(obj.getCenter())
-    const penetrationDeepthObst = penetration.subtract(obst.getCenter())
-    
-    
-    const torqueObj = penetrationDeepthObj.x * mtv.y - penetrationDeepthObj.y * mtv.x
-    const torqueObst = penetrationDeepthObst.x * mtv.y - penetrationDeepthObst.y * mtv.x
-    
-    obj.angularVelocity += torqueObj / obj.momentOfInertia
-    obst.angularVelocity -= torqueObst / obst.momentOfInertia
+        const contactPointsAverage = contactPoints
+            .reduce((sum, corner) => sum.add(corner), new Vector(0, 0))
+                .unscale(contactPoints.length)
+                
+        const aContactPointsAverage = contactPointsAverage.add(a.getCenter())
+        const bContactPointsAverage = contactPointsAverage.subtract(b.getCenter())
+        
+        const aTorque = aContactPointsAverage.x * mtv.y - aContactPointsAverage.y * mtv.x
+        const bTorque = bContactPointsAverage.x * mtv.y - bContactPointsAverage.y * mtv.x
+        
+        a.angularVelocity += aTorque / a.momentOfInertia
+        b.angularVelocity -= bTorque / b.momentOfInertia
+        
+    }
     
 }
 
-export function applySeparation(obj, obst) {
-    expect(RigidBody, obj)
-    expect(RigidBody, obst)
+export function applyFriction(a, b) {
+    expect(RigidBody, a)
+    expect(RigidBody, b)
     
-    let mtv = SAT.getMTV(obj.shape, obst.shape)
-    const deltaCenter = obj.getCenter().subtract(obst.getCenter())
+    // todo: implements z exis to make friction with areas
+    
+}
+
+export function applySeparation(a, b) {
+    expect(RigidBody, a)
+    expect(RigidBody, b)
+    
+    let mtv = SAT.getMTV(a.shape, b.shape)
+    
+    const deltaCenter = a.getCenter().subtract(
+            b.getCenter()
+        )
     
     if (mtv.dot(deltaCenter) < 0) {
         mtv = mtv.reverse()
     }
     
-    const totalReciprocalMass = 1 / obj.mass + 1 / obst.mass
+    const totalReciprocalMass = 1 / a.mass + 1 / b.mass
     
-    const correction = mtv.scale(1 / totalReciprocalMass)
+    const correction = mtv.unscale(totalReciprocalMass)
     
-    obj.setCenter(
-        obj.getCenter().add(
-                correction.scale(1 / obj.mass)
+    a.setCenter(
+        a.getCenter().add(
+                correction.unscale(a.mass)
             )
         )
     
-    obst.setCenter(
-        obst.getCenter().subtract(
-                correction.scale(1 / obst.mass)
+    b.setCenter(
+        b.getCenter().subtract(
+                correction.unscale(b.mass)
             )
         )
     

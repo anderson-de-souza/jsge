@@ -37,6 +37,18 @@ class Vector {
     scale(scaleX, scaleY = scaleX) {
         return new Vector(this.x * expect('number', scaleX), this.y * expect('number', scaleY))
     }
+    
+    unscale(scaleX, scaleY = scaleX) {
+        expect('number', scaleX)
+        expect('number', scaleY)
+        
+        if (scaleX === 0 || scaleY === 0) {
+            throw new Error(`the unscale args can't be 0: scaleX === ${ scaleX }, scaleY ===  ${ scaleY }`)
+        }
+        
+        return new Vector(this.x / scaleX, this.y / scaleY)
+        
+    }
 
     rotate(angleInRadians, anticlockwise = true) {
 

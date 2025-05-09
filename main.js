@@ -36,11 +36,11 @@ const body1 = new RigidBody(rect)
 
 physicEngine.addBody(body1)
 
-setTimeout(() => body1.forceX = 5000, 1000)
+setTimeout(() => body1.forceX = 17000, 1000)
 
 const rect2 = new Rectangle(50, 50)
-rect2.rotationAngle = 45
-
+rect2.rotationAngle = 60
+rect2.mass = 100000
 rect2.setCenter(new Vector(300, 100))
 
 const rectView2 = new View(context, rect2)
@@ -51,7 +51,7 @@ const body2 = new RigidBody(rect2)
 
 physicEngine.addBody(body2)
 
-setTimeout(() => body2.forceX = -5000, 1000)
+setTimeout(() => body2.forceX = -17000, 1000)
 
 const looper = Looper.instance
 
