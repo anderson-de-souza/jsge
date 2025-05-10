@@ -48,9 +48,9 @@ class ImageView extends View {
 
                 this.context.save()
 
-                const rotationAngle = Radians(this.style.rotationAngle * (this.style.counterClockwise ? -1: 1))
+                const rotation = this.style.rotationAngle * (this.style.anticlockwise ? -1: 1)
 
-                this.context.rotate(rotationAngle)
+                this.context.rotate(rotation)
 
                 if (this.style.cropped) {
 

@@ -12,7 +12,8 @@ class ViewRenderer {
     }
     
     addView(view) {
-        this.viewSet.add(expect(View, view))
+        expect(View, view)
+        this.viewSet.add(view)
     }
     
     removeView(view) {
@@ -32,7 +33,14 @@ class ViewRenderer {
     }
     
     set viewSet(value) {
-        this.#viewSet = expect(Set, value)
+        expect(Set, value)
+        
+        for (let view of value) {
+            expect(View, view)
+        }
+        
+        this.#viewSet = value
+        
     }
     
     get clearBefore() {
@@ -40,7 +48,10 @@ class ViewRenderer {
     }
     
     set clearBefore(value) {
-        this.#clearBefore = expect('boolean', value)
+        expect('boolean', value)
+        
+        this.#clearBefore = value
+        
     }
     
     run() {
@@ -56,9 +67,12 @@ class ViewRenderer {
     }
 
     clearContext() {
+        
         const width = this.context.canvas.width
         const height = this.context.canvas.height
+        
         this.context.clearRect(0, 0, width, height)
+        
     }
     
 }
