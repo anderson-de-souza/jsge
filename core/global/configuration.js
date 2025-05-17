@@ -7,9 +7,14 @@ class Configuration {
             return Configuration.#instance
         }
         Configuration.#instance = this
-        this.language = 'en'
+        
         this.isDebugMode = false
-        // TODO: collisionMethod = 'sat' || 'aabb'
+        
+        this.language = 'en'
+        this.collisionMethod = 'sat'
+        this.viewType = '2d'
+        this.gameGenre = 'rpg'
+        
     }
 
     static get instance() {

@@ -197,7 +197,7 @@ class Shape {
         throw new Error('getAxes must be implemented by subclasses of Shape.')
     }
 
-    getDrawingPath(context) {
+    getDrawingPath() {
         throw new Error('getDrawingPath must be implemented by subclasses of Shape.')
     }
 
