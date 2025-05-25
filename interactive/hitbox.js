@@ -15,7 +15,7 @@ class HitBox {
         const config = Configuration.getInstance()
         if (config.isDebugMode) {
             const hitBoxViewer = HitBoxViewer.getInstance()
-            hitBoxViewer.add(this)
+            hitBoxViewer.addHitBox(this)
         }
 
     }
