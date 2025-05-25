@@ -17,8 +17,8 @@ class Configuration {
         
     }
 
-    static get instance() {
-        return new Configuration()
+    static getInstance() {
+        return Configuration.#instance ?? new Configuration()
     }
 
 }

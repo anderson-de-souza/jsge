@@ -51,7 +51,7 @@ class RigidBody {
         
         this.#angularVelocity = 0
         
-        const shapeLinker = ShapeLinker.instance
+        const shapeLinker = ShapeLinker.getInstance()
         shapeLinker.link(shape, { body: this })
 
         

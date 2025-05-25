@@ -15,7 +15,7 @@ class View {
         this.shape = shape
         this.style = viewDefaultStyle
         
-        const shapeLinker = ShapeLinker.instance
+        const shapeLinker = ShapeLinker.getInstance()
         shapeLinker.link(this.shape, { view: this })
         
     }

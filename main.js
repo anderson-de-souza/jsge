@@ -54,7 +54,7 @@ const body2 = new RigidBody(rect2)
 
 //setTimeout(() => body2.forceX = -17000, 1000)
 
-const looper = Looper.instance
+const looper = Looper.getInstance()
 
 const gridDebug = new SpatialGridViewer(context, physicEngine.gridCellSize)
 

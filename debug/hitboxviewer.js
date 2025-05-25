@@ -1,40 +1,38 @@
-import HitBox from '../interactive/hitbox';
+import expect from '../../../util/expect.js'
+import HitBox from '../interactive/hitbox.js';
 
 class HitBoxViewer {
 
     static #instance
 
-    #context
-    #hitboxes
+    #hitBoxes
 
-    constructor(context) {
+    constructor() {
         if (HitBoxViewer.#instance) {
             return HitBoxViewer.#instance
         }
         HitBoxViewer.#instance = this
-        this.#context = context
-        this.#hitboxes = new Set()
+        this.#hitBoxes = new Set()
     }
 
-    add(newHitBox) {
-        if (newHitBox instanceof HitBox) {
-            this.#hitboxes.add(newHitBox)
-        }
+    addHitBox(hitBox) {
+        expect(HitBox, hitbox)
+        this.#hitBoxes.add(newHitBox)
     }
 
-    remove(hitbox) {
-        this.#hitboxes.delete(hitbox)
+    removeHitBox(hitbox) {
+        this.#hitBoxes.delete(hitbox)
     }
 
-    show() {
+    show(context) {
         for (const hitbox of this.#hitboxes) {
-            this.#context.strokeStyle = hitbox.color
-            this.#context.strokeRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height)
+            context.strokeStyle = hitbox.color
+            context.strokeRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height)
         }
     }
 
-    static instance(context) {
-        return new HitBoxViewer(context)
+    static getInstance() {
+        return HitBoxViewer.#instance ?? new HitBoxViewer()
     }
  
 }

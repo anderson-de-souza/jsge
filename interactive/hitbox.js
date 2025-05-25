@@ -12,9 +12,9 @@ class HitBox {
         this.height = height
         this.color = color
 
-        const config = Configuration.instance
+        const config = Configuration.getInstance()
         if (config.isDebugMode) {
-            const hitBoxViewer = HitBoxViewer.instance
+            const hitBoxViewer = HitBoxViewer.getInstance()
             hitBoxViewer.add(this)
         }
 

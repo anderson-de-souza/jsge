@@ -46,7 +46,7 @@ class Identifier {
         
     }
     
-    static get instance() {
+    static getInstance() {
         return Identifier.#instance ?? new Identifier()
     }
     

@@ -88,7 +88,7 @@ class Looper {
         Looper.#instance = null
     }
     
-    static get instance() {
+    static getInstance() {
         return Looper.#instance ?? new Looper()
     }
     

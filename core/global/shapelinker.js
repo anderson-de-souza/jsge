@@ -51,7 +51,7 @@ class ShapeLinker {
         return this.#bodyMap.get(expect(Shape, shape))
     }
     
-    static get instance() {
+    static getInstance() {
         return ShapeLinker.#instance ?? new ShapeLinker()
     }
     
