@@ -14,32 +14,37 @@ class FileLoader {
         this.#cache = new Map()
     }
     
-    async loadFile(url) {
-        
-        expect('string', url)
-        
-        let text = this.#cache.get(url)
-        
-        if (text) {
-            return { url, content: text }
+    async load(url) {
+        let data
+        if ((data = this.#cache.get(url))) {
+            return data.clone()
         }
-        
-        const response = await fetch(url)
-        text = await response.text()
-        this.#cache.set(url, text)
-        
-        return { url, content: text }
-        
+        try {
+            data = await fetch(url)
+            if (data.ok) {
+                this.#cache.set(url, data)
+                return data.clone()
+            } else {
+                throw new Error('failed to fetch data: ' + data.status)
+            }
+        } catch (error) {
+            throw new Error(`${ error.message }: "${url}";`)
+        }
     }
     
-    async loadFiles(...urls) {
-        const results = await Promise.all(urls.map(url =>
-                this.loadFile(url).catch(error => {
-                        console.error(`Error at loading "${ url }":`, error)
-                        return undefined
-                    })
-            ))
-        return results.filter(item => item !== undefined)
+    async loadText(url) {
+        const response = await this.load(url)
+        return await response.text()
+    }
+    
+    async loadArrayBuffer(url) {
+        const response = await this.load(url)
+        return await response.arrayBuffer()
+    }
+    
+    async loadJSON(url) {
+        const response = await this.load(url)
+        return await response.json()
     }
     
     static getInstance() {

@@ -12,3 +12,30 @@ html, body {
 canvas {
     display: block
 }
+
+.alert-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.alert-dialog-text {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.alert-dialog-container-buttons {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: end;
+    align-items: center;
+}
+
+.alert-dialog-button {
+    padding: 0.4rem;
+    margin-top: 0.4rem;
+    margin-left: 0.4rem;
+}

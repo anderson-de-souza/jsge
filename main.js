@@ -15,6 +15,10 @@ import Looper from './core/loop/looper.js'
 import Vector from './util/vector.js'
 import SpatialGridViewer from './debug/spatialgridviewer.js'
 
+import AudioClip from './core/audio/audioclip.js'
+import AudioLoader from './core/audio/audioloader.js'
+import AudioPlayer from './core/audio/audioplayer.js'
+
 const canvas = document.querySelector('canvas')
 
 canvas.width = innerWidth
@@ -61,5 +65,20 @@ const gridDebug = new SpatialGridViewer(context, physicEngine.gridCellSize)
 //looper.addCallback((deltaTime) => physicEngine.run(deltaTime))
 looper.addCallback(() => renderer.run())
 looper.addCallback(() => gridDebug.show())
+
+const audioPlayer = AudioPlayer.getInstance()
+const audioLoader = audioPlayer.getAudioLoader()
+
+audioPlayer.requestAudioUnlock(document.body, "Quer Ativar o audio?").then(state => {
+    
+    if (state) {
+        audioLoader.loadAudioClip('./resources/audio/tick_tockclock.wav').then(clip => {
+            audioPlayer.play(clip, () => {
+                console.log('end')
+            })
+        })
+    }
+    
+})
 
 looper.startLoop()
