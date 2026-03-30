@@ -5,7 +5,7 @@ class Identifier {
     static #instance
     
     #maxSize
-    #idSet
+    #currentId
     
     constructor() {
 
@@ -16,7 +16,7 @@ class Identifier {
         Identifier.#instance = this
 
         this.#maxSize = 64
-        this.#idSet = new Set()
+        this.#currentId = 0 
 
     }
     
@@ -30,19 +30,11 @@ class Identifier {
     
     generateId() {
         
-        if (this.#idSet.size >= this.maxSize) {
+        if (this.#currentId >= this.maxSize) {
             throw new Error("the maximum number of ids was reached")
         }
         
-        let newId
-        
-        do {
-            newId = Math.floor(Math.random() * 1000)
-        } while(this.#idSet.has(newId))
-        
-        this.#idSet.add(newId)
-        
-        return newId
+        return this.#currentId++
         
     }
     

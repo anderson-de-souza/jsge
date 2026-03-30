@@ -1,13 +1,13 @@
 import expect from '../../util/expect.js'
+import Identifier from '../global/identifier.js'
 import Vector from '../../util/vector.js'
 
 class Shape {
 
+    #id
+
     #x
     #y
-    
-    #centerX
-    #centerY
     
     #width
     #height
@@ -16,11 +16,11 @@ class Shape {
     #anticlockwise
     
     constructor() {
+        
+        this.#id = Identifier.getInstance().generateId()
+
         this.#x = 0
         this.#y = 0
-        
-        this.#centerX = 0
-        this.#centerY = 0
         
         this.#width = 0
         this.#height = 0
@@ -28,6 +28,10 @@ class Shape {
         this.#rotationAngle = Math.PI / 2
         this.#anticlockwise = true
         
+    }
+
+    get id() {
+        return this.#id
     }
     
     get x() {
@@ -137,6 +141,10 @@ class Shape {
 
     set anticlockwise(value) {
         this.#anticlockwise = expect('boolean', value)
+    }
+
+    getLocalCorners() {
+        throw new Error('getLocalCorners must be implemented by subclasses of Shape.')
     }
     
     getCorners() {

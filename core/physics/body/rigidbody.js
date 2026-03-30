@@ -1,6 +1,5 @@
 import expect from '../../../util/expect.js'
 import Shape from '../../shape/shape.js'
-import ShapeLinker from '../../global/shapelinker.js'
 import Vector from '../../../util/vector.js'
 
 class RigidBody {
@@ -13,7 +12,8 @@ class RigidBody {
     #forceX
     #forceY
 
-    #isImpulse
+    #impulseX
+    #impulseY
 
     #accelerationX
     #accelerationY
@@ -22,14 +22,20 @@ class RigidBody {
     #velocityY
     
     #torque
+    #angularImpulse
     
     #angularAcceleration
     
     #angularVelocity
 
+    #momentOfInertia
+
     constructor(shape) {
+        expect(Shape, shape)
         
-        this.shape = shape
+        this.#shape = shape
+
+        this.#shape.body = this
         
         this.#mass = 1
         this.#restitution = 0
@@ -37,7 +43,8 @@ class RigidBody {
         this.#forceX = 0
         this.#forceY = 0
     
-        this.#isImpulse = true
+        this.#impulseX = 0
+        this.#impulseY = 0
     
         this.#accelerationX = 0
         this.#accelerationY = 0
@@ -46,72 +53,79 @@ class RigidBody {
         this.#velocityY = 0
         
         this.#torque = 0
+
+        this.#angularImpulse = 0
         
         this.#angularAcceleration = 0
         
         this.#angularVelocity = 0
-        
-        const shapeLinker = ShapeLinker.getInstance()
-        shapeLinker.link(shape, { body: this })
 
-        
     }
 
     update(deltaTime) {
 
-        this.accelerationX = this.forceX / this.mass
-        this.accelerationY = this.forceY / this.mass
-        
-        this.velocityX += this.accelerationX * deltaTime
-        this.velocityY += this.accelerationY * deltaTime
-        
-        this.shape.centerX += this.velocityX * deltaTime
-        this.shape.centerY += this.velocityY * deltaTime
-        
-        this.angularAcceleration = this.torque / this.momentOfInertia
-        
-        this.angularVelocity += this.angularAcceleration * deltaTime
-        
-        this.shape.rotationAngle += this.angularVelocity * deltaTime
-        
-        if (this.isImpulse) {
-            this.forceX = 0
-            this.forceY = 0
-            this.torque = 0
-        }
+        this.#accelerationX = this.#forceX / this.#mass
+        this.#accelerationY = this.#forceY / this.#mass
 
+        this.velocityX += this.#impulseX / this.#mass
+        this.velocityY += this.#impulseY / this.#mass
+
+        this.velocityX += this.#accelerationX * deltaTime
+        this.velocityY += this.#accelerationY * deltaTime
+        
+        
+        this.centerX += this.#velocityX * deltaTime
+        this.centerY += this.#velocityY * deltaTime
+        
+        this.#angularAcceleration = this.#torque / this.momentOfInertia
+        
+        this.angularVelocity += this.#angularImpulse / this.momentOfInertia
+
+        this.angularVelocity += this.#angularAcceleration * deltaTime
+        
+        this.#shape.rotationAngle += this.angularVelocity * deltaTime
+
+        this.#forceX = 0
+        this.#forceY = 0
+        
+        this.#impulseX = 0
+        this.#impulseY = 0
+
+        this.#torque = 0
+        this.#angularImpulse = 0
+
+    }
+
+    get id() {
+        return this.#shape.id
     }
 
     get shape() {
         return this.#shape
     }
-
-    set shape(value) {
-        this.#shape = expect(Shape, value)
-    }
     
     get centerX() {
-        return this.shape.centerX
+        return this.#shape.centerX
     }
     
     set centerX(value) {
-        this.shape.centerX = value
+        this.#shape.centerX = value
     }
     
     get centerY() {
-        return this.shape.centerY
+        return this.#shape.centerY
     }
     
     set centerY(value) {
-        this.shape.centerY = value
+        this.#shape.centerY = value
     }
     
     getCenter() {
-        return this.shape.getCenter()
+        return this.#shape.getCenter()
     }
     
     setCenter(value) {
-        this.shape.setCenter(value)
+        this.#shape.setCenter(value)
     }
     
     get mass() {
@@ -126,6 +140,7 @@ class RigidBody {
         }
         
         this.#mass = value
+        this.#momentOfInertia = null
         
     }
 
@@ -134,7 +149,8 @@ class RigidBody {
     }
 
     set restitution(value) {
-        if (expect('number', value) < 0 || value > 1) {
+        expect('number', value)
+        if (value < 0 || value > 1) {
             throw new Error('restitution value needs to be between 0 and 1')
         }
         this.#restitution = value
@@ -156,12 +172,20 @@ class RigidBody {
         this.#forceY = expect('number', value)
     }
 
-    get isImpulse() {
-        return this.#isImpulse
+    get impulseX() {
+        return this.#impulseX
     }
 
-    set isImpulse(value) {
-        this.#isImpulse = expect('boolean', value)
+    set impulseX(value) {
+        this.#impulseX = expect('number', value)
+    }
+
+    get impulseY() {
+        return this.#impulseY
+    }
+
+    set impulseY(value) {
+        this.#impulseY = expect('number', value)
     }
 
     get accelerationX() {
@@ -185,7 +209,7 @@ class RigidBody {
     }
 
     set velocityX(value) {
-        this.#velocityX = Math.abs(expect('number', value)) > 0.1 ? value: 0
+        this.#velocityX = Math.abs(expect('number', value)) > 0.001 ? value: 0
     }
 
     get velocityY() {
@@ -193,7 +217,7 @@ class RigidBody {
     }
 
     set velocityY(value) {
-        this.#velocityY = Math.abs(expect('number', value)) > 0.1 ? value: 0
+        this.#velocityY = Math.abs(expect('number', value)) > 0.001 ? value: 0
     }
     
     getVelocity() {
@@ -215,6 +239,14 @@ class RigidBody {
     set torque(value) {
         this.#torque = expect('number', value)
     }
+
+    get angularImpulse() {
+        return this.#angularImpulse
+    }
+    
+    set angularImpulse(value) {
+        this.#angularImpulse = expect('number', value)
+    }
     
     get angularAcceleration() {
         return this.#angularAcceleration
@@ -229,11 +261,44 @@ class RigidBody {
     }
     
     set angularVelocity(value) {
-        this.#angularVelocity = expect('number', value)
+        this.#angularVelocity = Math.abs(expect('number', value)) > 0.001 ? value: 0
     }
     
     get momentOfInertia() {
-        return this.mass * this.shape.radius ** 2
+        if (this.#momentOfInertia === undefined || this.#momentOfInertia === null) {
+
+            const corners = this.#shape.getLocalCorners()
+            
+            let area = 0
+            let inertia = 0
+
+            for (let i = 0; i < corners.length; i++) {
+
+                const p0 = corners[i]
+                const p1 = corners[(i + 1) % corners.length]
+
+                const cross = p0.cross(p1)
+
+                const dot0 = p0.dot(p0)
+                const dot1 = p0.dot(p1)
+                const dot2 = p1.dot(p1)
+
+                area += cross
+                inertia += cross * (dot0 + dot1 + dot2)
+            }
+
+            area = Math.abs(area) * 0.5
+
+            const density = this.#mass / area
+
+            const result = (density / 6) * inertia
+
+            this.#momentOfInertia = result
+
+        }
+
+        return this.#momentOfInertia
+
     }
 
 }

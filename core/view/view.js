@@ -1,7 +1,6 @@
 import expect from '../../util/expect.js'
 import Rectangle from '../shape/rectangle.js'
 import Shape from '../shape/shape.js'
-import ShapeLinker from '../global/shapelinker.js';
 import viewDefaultStyle from './json/view-default-style.js'
 
 class View {
@@ -12,11 +11,11 @@ class View {
 
     constructor(context, shape = new Rectangle()) {
         this.context = context
-        this.shape = shape
+
+        this.#shape = expect(Shape, shape)
+        this.#shape.view = this
+
         this.style = viewDefaultStyle
-        
-        const shapeLinker = ShapeLinker.getInstance()
-        shapeLinker.link(this.shape, { view: this })
         
     }
 
@@ -30,10 +29,6 @@ class View {
     
     get shape() {
         return this.#shape
-    }
-    
-    set shape(value) {
-        this.#shape = expect(Shape, value)
     }
     
     get style() {

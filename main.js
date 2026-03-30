@@ -40,12 +40,12 @@ const physicEngine = new PhysicsEngine(100)
 
 const body1 = new RigidBody(rect)
 
-//physicEngine.addBody(body1)
+physicEngine.addBody(body1)
 
-//setTimeout(() => body1.forceX = 17000, 1000)
+setTimeout(() => body1.impulseX = 100, 1000)
 
 const rect2 = new Polygon(50, 4)
-rect2.setCenter(new Vector(100, 160))
+rect2.setCenter(new Vector(400, 160))
 
 const rectView2 = new View(context, rect2)
 rectView2.style.strokeColor = 'green'
@@ -54,25 +54,25 @@ renderer.addView(rectView2)
 
 const body2 = new RigidBody(rect2)
 
-//physicEngine.addBody(body2)
+physicEngine.addBody(body2)
 
-//setTimeout(() => body2.forceX = -17000, 1000)
+setTimeout(() => body2.impulseX = -660, 1000)
 
 const looper = Looper.getInstance()
 
 const gridDebug = new SpatialGridViewer(context, physicEngine.gridCellSize)
 
-//looper.addCallback((deltaTime) => physicEngine.run(deltaTime))
+looper.addCallback((deltaTime) => physicEngine.run(deltaTime))
 looper.addCallback(() => renderer.run())
 looper.addCallback(() => gridDebug.show())
-
+/*
 const audioPlayer = AudioPlayer.getInstance()
 const audioLoader = audioPlayer.getAudioLoader()
 
 audioPlayer.requestAudioUnlock(document.body, "Quer Ativar o audio?").then(state => {
     
     if (state) {
-        audioLoader.loadAudioClip('./resources/audio/tick_tockclock.wav').then(clip => {
+        audioLoader.loadAudioClip('\\resources\\audio\\tick_tock_clock.wav').then(clip => {
             audioPlayer.play(clip, () => {
                 console.log('end')
             })
@@ -80,5 +80,5 @@ audioPlayer.requestAudioUnlock(document.body, "Quer Ativar o audio?").then(state
     }
     
 })
-
+*/
 looper.startLoop()

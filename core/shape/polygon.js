@@ -23,6 +23,27 @@ class Polygon extends Shape {
         }
         this.#edgeCount = value
     }
+
+    getLocalCorners() {
+
+        const angleStep = (2 * Math.PI) / this.edgeCount
+
+        const corners = new Array(this.edgeCount)
+
+        for (let i = 0; i < this.edgeCount; i++) {
+            const angle = i * angleStep
+
+            corners[i] = new Vector(
+                    this.halfWidth * Math.cos(angle),
+                    this.halfHeight * Math.sin(angle)
+                ).rotate(
+                        this.rotationAngle,
+                        this.anticlockwise
+                    )
+        }
+
+        return corners
+    }
     
     getCorners() {
         

@@ -16,18 +16,23 @@ const Input = (function() {
         #keyPressedSet
         
         #mouseButtonPressedSet
-        #mousePointerPosition
+
+        #mousePointerPositionX
+        #mousePointerPositionY
+        
+        #mouseWheelDeltaX
+        #mouseWheelDeltaY
 
         constructor() {
+
             if (Input.#instance) {
                 return Input.#instance
             }
+
             Input.#instance = this
             
             this.#keyPressedSet = new Set()
-            
             this.#mouseButtonPressedSet = new Set()
-            this.#mousePointerPosition = new Vector()
             
         }
         
@@ -49,15 +54,32 @@ const Input = (function() {
         }
         
         setMousePointerPosition(x, y) {
-            this.#mousePointerPosition = new Vector(x, y)
+            this.#mousePointerPositionX = x
+            this.#mousePointerPositionY = y
         }
-        
+
         getMousePointerPosition() {
-            return this.#mousePointerPosition
+            return new Vector(this.#mousePointerPositionX, this.#mousePointerPositionY)
         }
         
+        getMousePointerPositionX() {
+            return this.#mousePointerPositionX
+        }
+
+        getMousePointerPositionY() {
+            return this.#mousePointerPositionY
+        }
+
         static getMousePointerPosition() {
             return Input.getInstance().getMousePointerPosition()
+        }
+        
+        static getMousePointerPositionX() {
+            return Input.getInstance().getMousePointerPositionX()
+        }
+
+        static getMousePointerPositionY() {
+            return Input.getInstance().getMousePointerPositionY()
         }
         
         addMouseButtonPressed(buttonCode) {
@@ -80,6 +102,30 @@ const Input = (function() {
         
         static isMouseButtonPressed(buttonName) {
             return Input.getInstance().isMouseButtonPressed(buttonName)
+        }
+        
+        setMouseWheelDeltaX(value) {
+            this.#mouseWheelDeltaX = expect('number', value)
+        }
+        
+        getMouseWheelDeltaX() {
+            return this.#mouseWheelDeltaX
+        }
+        
+        static getMouseWheelDeltaX() {
+            return Input.getInstance().getMouseWheelDeltaX()
+        }
+        
+        setMouseWheelDeltaY(value) {
+            this.#mouseWheelDeltaY = expect('number', value)
+        }
+        
+        getMouseWheelDeltaY() {
+            return this.#mouseWheelDeltaY
+        }
+        
+        static getMouseWheelDeltaY() {
+            return Input.getInstance().getMouseWheelDeltaY()
         }
         
         static getInstance() {

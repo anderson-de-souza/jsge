@@ -1,15 +1,12 @@
-import {
-    applyRestitution, 
-    applyRotation, 
-    applySeparation
-} from './interaction/rigidbodyinteractions.js'
+import applyRestitution from './interaction/rigidbody/restitution.js'
+import applyRotation from './interaction/rigidbody/rotation.js'
+import applySeparation from './interaction/rigidbody/separation.js'
 
 import expect from '../../util/expect.js'
-import Record from '../../util/record.js'
 import RigidBody from './body/rigidbody.js'
 import SAT from './collision-method/separatingaxistheorem.js'
-import ShapeLinker from '../global/shapelinker.js'
 import SpatialGrid from '../../util/spatialgrid.js'
+import Collision from './collision.js'
 
 class PhysicsEngine {
     
@@ -40,39 +37,65 @@ class PhysicsEngine {
     }
 
     run(deltaTime) {
-        const bodyRecord = new Record()
-        const processedPairs = new Set()
-        
-        for (let obj of this.#bodies) {
-            
-            this.#spatialgrid.removeShape(obj.shape)
-            bodyRecord.save(obj)
-            
-            const around = this.#spatialgrid.findAround(obj.shape)
-            
-            for (let obstShape of around) {
-                const obst = ShapeLinker.instance.getBody(obstShape)
-                if (obj === obst) continue
-                
-                const pairId = [obj, obst].sort().join('-')
-                if (processedPairs.has(pairId)) continue
-                
-                processedPairs.add(pairId)
-                
-                const mtv = SAT.getMTV(obj.shape, obstShape)
-                
-                if (mtv) {
-                    applyRestitution(obj, obst)
-                    applyRotation(obj, obst)
-                    applySeparation(obj, obst)
-                }
-                
+        this.update(deltaTime)
+        for (const body of this.#bodies) {
+            if (body.hasMoved) {
+                this.#spatialgrid.updateShape(body.shape)
             }
-            
-            obj.update(deltaTime)
-            
-            this.#spatialgrid.addShape(obj.shape)
-            
+        }
+        const collisions = this.findCollisions()
+        this.resolveCollisions(collisions)
+    }
+
+    findCollisions() {
+
+        const collisions = new Map()
+
+        for (let bodyA of this.#bodies) {
+
+            const shapeA = bodyA.shape
+            const aroundShapes = this.#spatialgrid.findAround(shapeA)
+
+            for (let shapeB of aroundShapes) {
+
+                const bodyB = shapeB.body
+
+                if (bodyA === bodyB) continue
+
+                const pairId = bodyA.id < bodyB.id
+                    ? `${bodyA.id}:${bodyB.id}`
+                    : `${bodyB.id}:${bodyA.id}`
+
+                if (collisions.has(pairId)) continue
+
+                const mtv = SAT.getMTV(shapeA, shapeB)
+
+                if (mtv) {
+                    collisions.set(pairId, new Collision(bodyA, bodyB, mtv))
+                }
+
+            }
+
+        }
+
+        return collisions
+    }
+
+    resolveCollisions(collisions = new Map()) {
+        for (const collision of collisions.values()) {
+
+            const { bodyA, bodyB, mtv } = collision
+
+            applySeparation(bodyA, bodyB, mtv)
+            applyRestitution(bodyA, bodyB, mtv)
+            applyRotation(bodyA, bodyB, mtv)
+
+        }
+    }
+
+    update(deltaTime) {
+        for (const body of this.#bodies) {
+            body.update(deltaTime)
         }
     }
     

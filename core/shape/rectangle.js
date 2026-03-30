@@ -21,6 +21,17 @@ class Rectangle extends Polygon {
         super.edgeCount = value
     }
 
+    getLocalCorners() {
+        const corners = [
+            new Vector(-this.halfWidth, -this.halfHeight),
+            new Vector( this.halfWidth, -this.halfHeight),
+            new Vector( this.halfWidth,  this.halfHeight),
+            new Vector(-this.halfWidth,  this.halfHeight)
+        ].map(corner => corner.rotate(this.rotationAngle, this.anticlockwise))
+            
+        return corners
+    }
+
     getCorners() {
         
         const corners = [

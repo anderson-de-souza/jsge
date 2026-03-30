@@ -67,6 +67,10 @@ class Vector {
     dot(other) {
         return this.x * expect(Vector, other).x + this.y * other.y
     }
+
+    cross(other) {
+        return this.x * expect(Vector, other).y - this.y * other.x
+    }
     
     reverse() {
         return new Vector(-this.x, -this.y)
