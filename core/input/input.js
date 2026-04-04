@@ -49,10 +49,6 @@ const Input = (function() {
             return this.#keyPressedSet.has(key)
         }
         
-        static isKeyPressed(key) {
-            return Input.getInstance().isKeyPressed(key)
-        }
-        
         setMousePointerPosition(x, y) {
             this.#mousePointerPositionX = x
             this.#mousePointerPositionY = y
@@ -68,18 +64,6 @@ const Input = (function() {
 
         getMousePointerPositionY() {
             return this.#mousePointerPositionY
-        }
-
-        static getMousePointerPosition() {
-            return Input.getInstance().getMousePointerPosition()
-        }
-        
-        static getMousePointerPositionX() {
-            return Input.getInstance().getMousePointerPositionX()
-        }
-
-        static getMousePointerPositionY() {
-            return Input.getInstance().getMousePointerPositionY()
         }
         
         addMouseButtonPressed(buttonCode) {
@@ -100,10 +84,6 @@ const Input = (function() {
             return this.#mouseButtonPressedSet.has(buttonCode)
         }
         
-        static isMouseButtonPressed(buttonName) {
-            return Input.getInstance().isMouseButtonPressed(buttonName)
-        }
-        
         setMouseWheelDeltaX(value) {
             this.#mouseWheelDeltaX = expect('number', value)
         }
@@ -112,20 +92,12 @@ const Input = (function() {
             return this.#mouseWheelDeltaX
         }
         
-        static getMouseWheelDeltaX() {
-            return Input.getInstance().getMouseWheelDeltaX()
-        }
-        
         setMouseWheelDeltaY(value) {
             this.#mouseWheelDeltaY = expect('number', value)
         }
         
         getMouseWheelDeltaY() {
             return this.#mouseWheelDeltaY
-        }
-        
-        static getMouseWheelDeltaY() {
-            return Input.getInstance().getMouseWheelDeltaY()
         }
         
         static getInstance() {
