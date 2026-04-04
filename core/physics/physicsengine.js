@@ -38,11 +38,6 @@ class PhysicsEngine {
 
     run(deltaTime) {
         this.update(deltaTime)
-        for (const body of this.#bodies) {
-            if (body.hasMoved) {
-                this.#spatialgrid.updateShape(body.shape)
-            }
-        }
         const collisions = this.findCollisions()
         this.resolveCollisions(collisions)
     }
@@ -58,8 +53,7 @@ class PhysicsEngine {
 
             for (let shapeB of aroundShapes) {
 
-                const bodyB = shapeB.body
-
+                const bodyB = expect(RigidBody, shapeB.body)
                 if (bodyA === bodyB) continue
 
                 const pairId = bodyA.id < bodyB.id
@@ -96,6 +90,9 @@ class PhysicsEngine {
     update(deltaTime) {
         for (const body of this.#bodies) {
             body.update(deltaTime)
+            if (body.hasMoved) {
+                this.#spatialgrid.updateShape(body.shape)
+            }
         }
     }
     

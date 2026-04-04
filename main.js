@@ -38,7 +38,7 @@ renderer.addView(rectView)
 
 const physicEngine = new PhysicsEngine(100)
 
-const body1 = new RigidBody(rect)
+const body1 = new RigidBody({ shape: rect })
 
 physicEngine.addBody(body1)
 
@@ -52,11 +52,11 @@ rectView2.style.strokeColor = 'green'
 
 renderer.addView(rectView2)
 
-const body2 = new RigidBody(rect2)
+const body2 = new RigidBody({ shape: rect2, mass: 10 })
 
 physicEngine.addBody(body2)
 
-setTimeout(() => body2.impulseX = -660, 1000)
+setTimeout(() => body2.impulseX = -5000, 1000)
 
 const looper = Looper.getInstance()
 

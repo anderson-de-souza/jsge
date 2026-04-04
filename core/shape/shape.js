@@ -15,6 +15,8 @@ class Shape {
     #rotationAngle
     #anticlockwise
     
+    #boundingBox
+    
     constructor() {
         
         this.#id = Identifier.getInstance().generateId()
@@ -48,6 +50,7 @@ class Shape {
     
     set y(value) {
         this.#y = expect('number', value)
+        this.#boundingBox = null
     }
     
     get centerX() {
@@ -74,7 +77,8 @@ class Shape {
     }
     
     setPosition(vector) {
-        this.x = expect(Vector, vector).x
+        expect(Vector, vector)
+        this.x = vector.x
         this.y = vector.y
     }
 
@@ -86,7 +90,8 @@ class Shape {
     }
     
     setCenter(vector) {
-        this.centerX = expect(Vector, vector).x
+        expect(Vector, vector)
+        this.centerX = vector.x
         this.centerY = vector.y
     }
     
@@ -97,6 +102,8 @@ class Shape {
     set radius(value) {
         this.width = value * 2
         this.height = value * 2
+        this.#boundingBox = null
+        this.body?.markAsMoved()
     }
     
     get diameter() {
@@ -109,6 +116,8 @@ class Shape {
 
     set width(value) {
         this.#width = expect('number', value)
+        this.#boundingBox = null
+        this.body?.markAsMoved()
     }
 
     get height() {
@@ -117,6 +126,8 @@ class Shape {
 
     set height(value) {
         this.#height = expect('number', value)
+        this.#boundingBox = null
+        this.body?.markAsMoved()
     }
 
     get halfWidth() {
@@ -133,6 +144,8 @@ class Shape {
 
     set rotationAngle(value) {
         this.#rotationAngle = expect('number', value)
+        this.#boundingBox = null
+        this.body?.markAsMoved()
     }
 
     get anticlockwise() {
@@ -188,13 +201,22 @@ class Shape {
     }
     
     getBoundingBox() {
+        
+        if (this.body && !this.body.hasMoved && this.#boundingBox) {
+            return this.#boundingBox
+        }
+        
         const bounds = this.getBounds()
-        return {
+        
+        this.#boundingBox = {
             x: bounds.min.x,
             y: bounds.min.y,
             width: bounds.max.x - bounds.min.x,
             height: bounds.max.y - bounds.min.y
         }
+        
+        return this.#boundingBox
+        
     }
     
     getEdges() {

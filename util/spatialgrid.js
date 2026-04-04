@@ -4,10 +4,14 @@ import Shape from '../core/shape/shape.js'
 class SpatialGrid {
     
     #cellSize
+    #invertCellSize
+    
+    #shapeKeys
     #grid
     
     constructor(cellSize) {
         this.cellSize = cellSize
+        this.#shapeKeys = new Map()
         this.#grid = new Map()
     }
     
@@ -17,12 +21,17 @@ class SpatialGrid {
     
     set cellSize(value) {
         this.#cellSize = expect('number', value)
+        this.#invertCellSize = 1 / this.#cellSize
     }
     
     generateKey(x, y) {
         expect('number', x)
         expect('number', y)
-        return `${ Math.floor(expect('number', x) / this.cellSize) },${ Math.floor(expect('number', y) / this.cellSize) }`
+        return `${Math.floor(x * this.#invertCellSize)},${Math.floor(y * this.#invertCellSize)}`
+    }
+    
+    cellToKey(cellX, cellY) {
+        return `${cellX},${cellY}`
     }
     
     generateKeys(shape) {
@@ -30,17 +39,17 @@ class SpatialGrid {
         
         const box = shape.getBoundingBox()
         
-        const startX = Math.floor(box.x / this.cellSize)
-        const startY = Math.floor(box.y / this.cellSize)
+        const startX = Math.floor(box.x * this.#invertCellSize)
+        const startY = Math.floor(box.y * this.#invertCellSize)
         
-        const endX = Math.floor((box.x + box.width) / this.cellSize)
-        const endY = Math.floor((box.y + box.height) / this.cellSize)
+        const endX = Math.floor((box.x + box.width) * this.#invertCellSize)
+        const endY = Math.floor((box.y + box.height) * this.#invertCellSize)
         
-        const keys = new Set()
+        const keys = []
     
         for (let cellX = startX; cellX <= endX; cellX++) {
             for (let cellY = startY; cellY <= endY; cellY++) {
-                keys.add(`${ cellX },${ cellY }`)
+                keys.push(this.cellToKey(cellX, cellY))
             }
         }
         
@@ -70,7 +79,15 @@ class SpatialGrid {
     }
 
     addShape(shape) {
-        for (const key of this.generateKeys(shape)) {
+        
+        if (this.#shapeKeys.has(shape)) {
+            this.removeShape(shape)
+        }
+        
+        const keys = this.generateKeys(shape)
+        this.#shapeKeys.set(shape, keys)
+        
+        for (const key of keys) {
             let cell = this.#grid.get(key)
             if (!cell) {
                 cell = new Set()
@@ -81,7 +98,9 @@ class SpatialGrid {
     }
 
     removeShape(shape) {
-        for (const key of this.generateKeys(shape)) {
+        const keys = this.#shapeKeys.get(shape)
+        if (!keys) return
+        for (const key of keys) {
             const cell = this.#grid.get(key)
             if (cell) {
                 cell.delete(shape)
@@ -90,6 +109,7 @@ class SpatialGrid {
                 }
             }
         }
+        this.#shapeKeys.delete(shape)
     }
 
     updateShape(shape) {
@@ -101,6 +121,7 @@ class SpatialGrid {
         expect(Array, shapes)
         
         this.#grid.clear()
+        this.#shapeKeys.clear()
 
         for (const shape of shapes) {
             this.addShape(shape)
@@ -114,16 +135,16 @@ class SpatialGrid {
         
         const box = shape.getBoundingBox()
         
-        const startX = Math.floor(box.x / this.cellSize) - range
-        const startY = Math.floor(box.y / this.cellSize) - range
+        const startX = Math.floor(box.x * this.#invertCellSize) - range
+        const startY = Math.floor(box.y * this.#invertCellSize) - range
         
-        const endX = Math.floor((box.x + box.width) / this.cellSize) + range
-        const endY = Math.floor((box.y + box.height) / this.cellSize) + range
+        const endX = Math.floor((box.x + box.width) * this.#invertCellSize) + range
+        const endY = Math.floor((box.y + box.height) * this.#invertCellSize) + range
         
-        for (let cellX = startX; cellX < endX; cellX++) {
-            for (let cellY = startY; cellY < endY; cellY++) {
+        for (let cellX = startX; cellX <= endX; cellX++) {
+            for (let cellY = startY; cellY <= endY; cellY++) {
                 
-                const cell = this.#grid.get(`${ cellX },${ cellY }`)
+                const cell = this.#grid.get(this.cellToKey(cellX, cellY))
                 
                 if (cell) {
                     for (const child of cell) {

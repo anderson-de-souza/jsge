@@ -5,7 +5,12 @@ import Shape from './shape.js'
 class Polygon extends Shape {
 
     #edgeCount
-
+    #localCorners
+    
+    #corners
+    #edges
+    #axes
+    
     constructor(radius = 0, edgeCount = 3) {
         super()
         this.radius = radius
@@ -22,56 +27,62 @@ class Polygon extends Shape {
             throw new Error('Polygon needs to have at least 3 edges')
         }
         this.#edgeCount = value
+        this.#localCorners = null
     }
 
     getLocalCorners() {
+        
+        if (this.#localCorners == null) {
 
-        const angleStep = (2 * Math.PI) / this.edgeCount
-
-        const corners = new Array(this.edgeCount)
-
-        for (let i = 0; i < this.edgeCount; i++) {
-            const angle = i * angleStep
-
-            corners[i] = new Vector(
-                    this.halfWidth * Math.cos(angle),
-                    this.halfHeight * Math.sin(angle)
-                ).rotate(
-                        this.rotationAngle,
-                        this.anticlockwise
+            const angleStep = (2 * Math.PI) / this.edgeCount
+    
+            const corners = new Array(this.edgeCount)
+    
+            for (let i = 0; i < this.edgeCount; i++) {
+                
+                const angle = i * angleStep
+    
+                corners[i] = new Vector(
+                        this.halfWidth * Math.cos(angle),
+                        this.halfHeight * Math.sin(angle)
                     )
+                    
+            }
+            
+            this.#localCorners = corners
+            
         }
-
-        return corners
+        
+        return this.#localCorners
+        
     }
     
     getCorners() {
         
-        const angleStep = (2 * Math.PI) / this.edgeCount
-        
-        const corners = new Array(this.edgeCount)
-
-        for (let i = 0; i < this.edgeCount; i++) {
-
-            const angle = i * angleStep
-            corners[i] = new Vector(
-                    this.halfWidth * Math.cos(angle),
-                    this.halfHeight * Math.sin(angle)
-                ).rotate(
-                        this.rotationAngle, 
-                        this.anticlockwise
-                    ).add(new Vector(
-                                this.centerX,
-                                this.centerY
-                            ))
-
+        if (this.body && !this.body.hasMoved && this.#corners) {
+            return this.#corners
         }
-
-        return corners
-
+        
+        const corners = new Array()
+        const center = new Vector(this.centerX, this.centerY)
+        
+        for (const corner of this.getLocalCorners()) {
+            corners.push(
+                corner.rotate(this.rotationAngle, this.anticlockwise)
+                    .add(center)
+            )
+        }
+        
+        this.#corners = corners
+        return this.#corners
+        
     }
     
     getEdges() {
+        
+        if (this.body && !this.body.hasMoved && this.#edges) {
+            return this.#edges
+        }
         
         const corners = this.getCorners()
         
@@ -86,11 +97,17 @@ class Polygon extends Shape {
                 )
         }
         
-        return edges
+        this.#edges = edges
+        
+        return this.#edges
         
     }
     
     getAxes() {
+        
+        if (this.body && !this.body.hasMoved && this.#axes) {
+            return this.#axes
+        }
         
         const edges = this.getEdges()
         
@@ -100,7 +117,8 @@ class Polygon extends Shape {
             axes[i] = edges[i].perpendicular().normalize()
         }
         
-        return axes
+        this.#axes = axes
+        return this.#axes
         
     }
 
