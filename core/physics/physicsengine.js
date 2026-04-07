@@ -7,14 +7,20 @@ import Vector from '../../util/vector.js'
 
 class PhysicsEngine {
     
+    #physicsIterations
     #gridCellSize
     #spatialgrid
     #bodies
     
-    constructor(gridCellSize) {
+    constructor(physicsIterations, gridCellSize) {
+        this.#physicsIterations = physicsIterations
         this.#gridCellSize = gridCellSize
         this.#spatialgrid = new SpatialGrid(gridCellSize)
         this.#bodies = new Set()
+    }
+
+    get physicsIterations() {
+        return this.#physicsIterations
     }
     
     get gridCellSize() {
@@ -35,8 +41,11 @@ class PhysicsEngine {
 
     run(deltaTime) {
         this.update(deltaTime)
-        const collisions = this.findCollisions()
-        this.resolveCollisions(collisions)
+        for (let i = 0; i < this.#physicsIterations; i++) {
+            const collisions = this.findCollisions()
+            this.resolveCollisions(collisions)
+        }
+        
     }
 
     findCollisions() {
@@ -72,110 +81,6 @@ class PhysicsEngine {
         return collisions
     }
 
-    resolveCollision(a, b, mtv) {
-
-        // --- NORMAL ---
-        let normal = mtv.clone().normalize()
-
-        const delta = b.getCenter().subtract(a.getCenter())
-        if (normal.dot(delta) < 0) {
-            normal = normal.reverse()
-        }
-
-        const penetration = mtv.magnitude()
-
-        // --- POSITION CORRECTION ---
-        const percent = 0.8
-        const slop = 0.01
-
-        const totalInvMass = a.invertMass + b.invertMass
-
-        if (totalInvMass === 0) return
-
-        const correction = normal.clone().scale(
-            Math.max(penetration - slop, 0) / totalInvMass * percent
-        )
-
-        a.setCenter(
-            a.getCenter().subtract(correction.clone().scale(a.invertMass))
-        )
-
-        b.setCenter(
-            b.getCenter().add(correction.clone().scale(b.invertMass))
-        )
-
-        // --- CONTACT POINT (aproximação simples) ---
-        const contactPoints = SAT.getInsideCorners(a.shape, b.shape)
-
-        let contact
-
-        if (contactPoints.length > 0) {
-            contact = contactPoints
-                .reduce((sum, p) => sum.add(p), new Vector(0, 0))
-                .unscale(contactPoints.length)
-        } else {
-            contact = a.getCenter()
-                .add(b.getCenter())
-                .unscale(2)
-                .add(normal.clone().scale(penetration * 0.5))
-        }
-
-        const ra = contact.subtract(a.getCenter())
-        const rb = contact.subtract(b.getCenter())
-
-        // --- RELATIVE VELOCITY (com rotação) ---
-        const velA = new Vector(
-            a.velocityX - a.angularVelocity * ra.y,
-            a.velocityY + a.angularVelocity * ra.x
-        )
-
-        const velB = new Vector(
-            b.velocityX - b.angularVelocity * rb.y,
-            b.velocityY + b.angularVelocity * rb.x
-        )
-
-        const rv = velB.subtract(velA)
-
-        const velAlongNormal = rv.dot(normal)
-
-        if (velAlongNormal > -0.0001) return
-
-        // --- RESTITUTION ---
-        const restitution = Math.min(a.restitution, b.restitution)
-
-        // --- IMPULSE (COM ROTAÇÃO) ---
-        const raCrossN = ra.x * normal.y - ra.y * normal.x
-        const rbCrossN = rb.x * normal.y - rb.y * normal.x
-
-        const invMassSum =
-            a.invertMass +
-            b.invertMass +
-            (raCrossN * raCrossN) * a.invertMomentOfInertia +
-            (rbCrossN * rbCrossN) * b.invertMomentOfInertia
-
-        const j = Math.max(
-            -(1 + restitution) * velAlongNormal / invMassSum,
-            0
-        )
-
-        const impulse = normal.clone().scale(j)
-
-        // --- APPLY LINEAR ---
-        a.velocityX -= impulse.x * a.invertMass
-        a.velocityY -= impulse.y * a.invertMass
-
-        b.velocityX += impulse.x * b.invertMass
-        b.velocityY += impulse.y * b.invertMass
-
-        // --- APPLY ANGULAR ---
-        const torqueA = ra.x * impulse.y - ra.y * impulse.x
-        const torqueB = rb.x * impulse.y - rb.y * impulse.x
-
-        a.angularVelocity -= torqueA * a.invertMomentOfInertia
-        b.angularVelocity += torqueB * b.invertMomentOfInertia
-
-    }
-
     resolveCollisions(collisions = new Map()) {
         for (const collision of collisions.values()) {
 
@@ -183,6 +88,114 @@ class PhysicsEngine {
 
             this.resolveCollision(bodyA, bodyB, mtv)
 
+        }
+    }
+
+    applyImpulse(a, b, impulse, ra, rb) {
+        // Corpo A (Reação)
+        a.velocityX -= impulse.x * a.invertMass;
+        a.velocityY -= impulse.y * a.invertMass;
+        a.angularVelocity -= (ra.x * impulse.y - ra.y * impulse.x) * a.invertMomentOfInertia;
+
+        // Corpo B (Ação)
+        b.velocityX += impulse.x * b.invertMass;
+        b.velocityY += impulse.y * b.invertMass;
+        b.angularVelocity += (rb.x * impulse.y - rb.y * impulse.x) * b.invertMomentOfInertia;
+    }
+
+    resolveCollision(a, b, mtv) {
+
+        if (a.sleeping && b.sleeping) return;
+
+        let normal = mtv.normalize();
+        const delta = b.getCenter().subtract(a.getCenter());
+        if (normal.dot(delta) < 0) normal = normal.reverse();
+
+        const penetration = mtv.magnitude();
+        const totalInvMass = a.invertMass + b.invertMass;
+        if (totalInvMass === 0) return;
+
+        // --- CONTACT POINT ---
+        const insideA = SAT.getInsideCorners(a.shape, b.shape);
+        const insideB = SAT.getInsideCorners(b.shape, a.shape);
+        const contactPoints = [...insideA, ...insideB];
+
+        let contact = contactPoints.length > 0 
+            ? contactPoints.reduce((sum, p) => sum.add(p), new Vector(0, 0)).unscale(contactPoints.length)
+            : a.getCenter().add(normal.scale(penetration * 0.5));
+
+        const ra = contact.subtract(a.getCenter());
+        const rb = contact.subtract(b.getCenter());
+
+        // --- VELOCIDADE RELATIVA ---
+        const getRelativeVel = (obj, r) => new Vector(
+            obj.velocityX - obj.angularVelocity * r.y,
+            obj.velocityY + obj.angularVelocity * r.x
+        );
+
+        let rv = getRelativeVel(b, rb).subtract(getRelativeVel(a, ra));
+        let velAlongNormal = rv.dot(normal);
+
+        // Se já estão se afastando, ignora o impulso
+        if (velAlongNormal > 0) return;
+
+        // --- IMPULSO NORMAL ---
+        const raCrossN = ra.x * normal.y - ra.y * normal.x;
+        const rbCrossN = rb.x * normal.y - rb.y * normal.x;
+        
+        const invMassSum = a.invertMass + b.invertMass +
+            (raCrossN * raCrossN) * a.invertMomentOfInertia +
+            (rbCrossN * rbCrossN) * b.invertMomentOfInertia;
+
+        const restitution = Math.min(a.restitution, b.restitution);
+        let j = -(1 + restitution) * velAlongNormal;
+        j /= invMassSum;
+
+        const impulse = normal.scale(j);
+        this.applyImpulse(a, b, impulse, ra, rb);
+
+        // --- FRICÇÃO (Atrito) ---
+        // Atualizamos rv após o primeiro impulso para maior precisão
+        rv = getRelativeVel(b, rb).subtract(getRelativeVel(a, ra));
+        let tangent = rv.subtract(normal.scale(rv.dot(normal)));
+
+        if (tangent.magnitude() > 1e-6) {
+            tangent = tangent.normalize();
+            const raCrossT = ra.x * tangent.y - ra.y * tangent.x;
+            const rbCrossT = rb.x * tangent.y - rb.y * tangent.x;
+            
+            const invMassSumTangent = a.invertMass + b.invertMass +
+                (raCrossT * raCrossT) * a.invertMomentOfInertia +
+                (rbCrossT * rbCrossT) * b.invertMomentOfInertia;
+
+            let jt = -rv.dot(tangent);
+            jt /= invMassSumTangent;
+
+            const mu = 0.5; // Coeficiente de atrito (pode ser dinâmico)
+            // Calcula o limite máximo de atrito baseado no impulso normal (j) e no coeficiente (mu)
+            const maxFriction = j * mu;
+
+            // O equivalente a clamp(jt, -maxFriction, maxFriction) em JS puro:
+            const clampedJt = Math.max(-maxFriction, Math.min(jt, maxFriction));
+
+            const frictionImpulse = tangent.scale(clampedJt);
+            this.applyImpulse(a, b, frictionImpulse, ra, rb);
+        }
+
+        // --- CORREÇÃO POSICIONAL (Anti-Tremor / Slop) ---
+        const percent = 0.2; 
+        const slop = 0.05;
+        const correctionMagnitude = Math.max(penetration - slop, 0) / totalInvMass * percent;
+        const correction = normal.scale(correctionMagnitude);
+
+        a.setCenter(a.getCenter().subtract(correction.scale(a.invertMass)));
+        b.setCenter(b.getCenter().add(correction.scale(b.invertMass)));
+
+        // --- ACORDAR OS CORPOS ---
+        // Se houve colisão significativa, ambos devem sair do sleep
+        if (j > 0.0001) {
+            a.wakeUp();
+            b.wakeUp();
         }
     }
 

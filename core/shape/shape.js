@@ -13,7 +13,6 @@ class Shape {
     #height
 
     #rotationAngle
-    #anticlockwise
     
     #boundingBox
     
@@ -28,7 +27,6 @@ class Shape {
         this.#height = 0
         
         this.#rotationAngle = Math.PI / 2
-        this.#anticlockwise = true
         
     }
 
@@ -146,14 +144,6 @@ class Shape {
         this.#rotationAngle = expect('number', value)
         this.#boundingBox = null
         this.body?.markAsMoved()
-    }
-
-    get anticlockwise() {
-        return this.#anticlockwise
-    }
-
-    set anticlockwise(value) {
-        this.#anticlockwise = expect('boolean', value)
     }
 
     getLocalCorners() {

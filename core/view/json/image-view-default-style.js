@@ -2,8 +2,7 @@ import viewDefaultStyle from './view-default-style.js'
 
 const imageViewDefaultStyle = {
     ...viewDefaultStyle,
-    "rotationAngle": 90,
-    "anticlockwise": true,
+    "rotationAngle": Math.PI / 2,
     "cropped": false,
     "cropArea": { 
         "x": 0, 

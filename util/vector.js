@@ -50,12 +50,10 @@ class Vector {
         
     }
 
-    rotate(angleInRadians, anticlockwise = true) {
-
-        const rotation = anticlockwise ? angleInRadians : -angleInRadians
+    rotate(angleInRadians) {
         
-        const cos = Math.cos(rotation)
-        const sin = Math.sin(rotation)
+        const cos = Math.cos(angleInRadians)
+        const sin = Math.sin(angleInRadians)
         
         return new Vector(
             this.x * cos - this.y * sin,

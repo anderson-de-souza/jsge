@@ -57,7 +57,7 @@ class Looper {
     
     clearLoop() {
         if (this.#loopId) {
-            cancelAnimationFrame(this.loopId)
+            cancelAnimationFrame(this.#loopId)
             this.#loopId = null
         }
     }
@@ -68,14 +68,20 @@ class Looper {
             this.clearLoop()
             return
         }
+
+        if (this.#lastTime === 0) {
+            this.#lastTime = timestamp
+        }
         
-        let deltaTime = (timestamp - this.#lastTime) / 1000
+        const deltaTime = (timestamp - this.#lastTime) / 1000
         this.#lastTime = timestamp
         
         this.#loopCount++
         
         if (this.#loopCount > this.loopInterval) {
-            this.#callbacks.forEach(callback => callback(deltaTime))
+            for (const callback of this.#callbacks) {
+                callback(deltaTime)
+            }
             this.#loopCount = 0
         }
         

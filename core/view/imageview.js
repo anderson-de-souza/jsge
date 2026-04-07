@@ -4,7 +4,6 @@ import Rectangle from '../shape/rectangle.js'
 import View from './view.js'
 import Radians from '../../util/radians.js'
 
-
 class ImageView extends View { 
 
     constructor(context, shape = new Rectangle()) {
@@ -48,9 +47,7 @@ class ImageView extends View {
 
                 this.context.save()
 
-                const rotation = this.style.rotationAngle * (this.style.anticlockwise ? -1: 1)
-
-                this.context.rotate(rotation)
+                this.context.rotate(this.style.rotationAngle)
 
                 if (this.style.cropped) {
 

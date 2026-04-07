@@ -47,12 +47,12 @@ class View {
 
             if (this.style.filled) {
 
-                this.context.fillStyle = this.style.fillColor
+                this.context.fillStyle = this.style.color
                 this.context.fill(path)
 
             } else {
 
-                this.context.strokeStyle = this.style.strokeColor
+                this.context.strokeStyle = this.style.color
                 this.context.lineWidth = this.style.lineWidth
                 this.context.stroke(path)
                 

@@ -15,7 +15,7 @@ const expect = (function() {
     
     function expect(type, field, throwError = true) {
         
-        let expected, actual
+        /*let expected, actual
         
         if (type === null) {
             expected = 'null'
@@ -62,7 +62,8 @@ const expect = (function() {
             throw new Error(`"${ actual }" is not a "${ expected }", but got "${ field }"`)
         }
 
-        return undefined
+        return undefined*/
+        return field
         
     }
     

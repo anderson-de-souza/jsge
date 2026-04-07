@@ -4,6 +4,9 @@ import Vector from '../../util/vector.js'
 
 class Rectangle extends Polygon {
 
+    #localCorners
+    #corners
+
     constructor(width = 0, height = 0) {
         super((width + height) / 4, 4)
         this.width = width
@@ -22,32 +25,38 @@ class Rectangle extends Polygon {
     }
 
     getLocalCorners() {
-        const corners = [
-            new Vector(-this.halfWidth, -this.halfHeight),
-            new Vector( this.halfWidth, -this.halfHeight),
-            new Vector( this.halfWidth,  this.halfHeight),
-            new Vector(-this.halfWidth,  this.halfHeight)
-        ].map(corner => corner.rotate(this.rotationAngle, this.anticlockwise))
-            
-        return corners
+
+        if (this.#localCorners == null) {
+            this.#localCorners = [
+                new Vector(-this.halfWidth, -this.halfHeight),
+                new Vector( this.halfWidth, -this.halfHeight),
+                new Vector( this.halfWidth,  this.halfHeight),
+                new Vector(-this.halfWidth,  this.halfHeight)
+            ]
+        }
+
+        return this.#localCorners
+
     }
 
     getCorners() {
+
+        if (this.body && !this.body.hasMoved && this.#corners) {
+            return this.#corners
+        }
         
-        const corners = [
-            new Vector(-this.halfWidth, -this.halfHeight),
-            new Vector( this.halfWidth, -this.halfHeight),
-            new Vector( this.halfWidth,  this.halfHeight),
-            new Vector(-this.halfWidth,  this.halfHeight)
-        ].map(corner =>
-                corner.rotate(this.rotationAngle, this.anticlockwise)
-                    .add(new Vector(
-                            this.centerX,
-                            this.centerY
-                        ))
+        const corners = new Array()
+        const center = new Vector(this.centerX, this.centerY)
+        
+        for (const corner of this.getLocalCorners()) {
+            corners.push(
+                corner.rotate(this.rotationAngle)
+                    .add(center)
             )
-            
-        return corners
+        }
+        
+        this.#corners = corners
+        return this.#corners
         
     }
     

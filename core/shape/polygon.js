@@ -28,6 +28,9 @@ class Polygon extends Shape {
         }
         this.#edgeCount = value
         this.#localCorners = null
+        this.#corners = null
+        this.#edges = null
+        this.#axes = null
     }
 
     getLocalCorners() {
@@ -68,7 +71,7 @@ class Polygon extends Shape {
         
         for (const corner of this.getLocalCorners()) {
             corners.push(
-                corner.rotate(this.rotationAngle, this.anticlockwise)
+                corner.rotate(this.rotationAngle)
                     .add(center)
             )
         }
