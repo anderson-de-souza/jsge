@@ -92,15 +92,15 @@ class PhysicsEngine {
     }
 
     applyImpulse(a, b, impulse, ra, rb) {
-        // Corpo A (Reação)
-        a.velocityX -= impulse.x * a.invertMass;
-        a.velocityY -= impulse.y * a.invertMass;
-        a.angularVelocity -= (ra.x * impulse.y - ra.y * impulse.x) * a.invertMomentOfInertia;
-
-        // Corpo B (Ação)
-        b.velocityX += impulse.x * b.invertMass;
-        b.velocityY += impulse.y * b.invertMass;
-        b.angularVelocity += (rb.x * impulse.y - rb.y * impulse.x) * b.invertMomentOfInertia;
+        // Torque para A e B
+        const torqueA = ra.x * impulse.y - ra.y * impulse.x;
+        const torqueB = rb.x * impulse.y - rb.y * impulse.x;  // Cuidado com o typo aqui, deve ser rb.y
+    
+        // Corpo A (Reação: Inverte o sinal de tudo)
+        a.applyImpulse(-impulse.x, -impulse.y, -torqueA);
+    
+        // Corpo B (Ação: Mantém o sinal original do impulso calculado)
+        b.applyImpulse(impulse.x, impulse.y, torqueB);
     }
 
     resolveCollision(a, b, mtv) {
@@ -177,26 +177,26 @@ class PhysicsEngine {
 
             // O equivalente a clamp(jt, -maxFriction, maxFriction) em JS puro:
             const clampedJt = Math.max(-maxFriction, Math.min(jt, maxFriction));
+            if (Math.abs(clampedJt) > 0.01) { // Só aplica se houver atrito real
+                if (j > 0.1 || Math.abs(clampedJt) > 0.1) {
+                    a.wakeUp();
+                    b.wakeUp();
+                }
+                const frictionImpulse = tangent.scale(clampedJt);
+                this.applyImpulse(a, b, frictionImpulse, ra, rb);
+            }
 
-            const frictionImpulse = tangent.scale(clampedJt);
-            this.applyImpulse(a, b, frictionImpulse, ra, rb);
         }
 
         // --- CORREÇÃO POSICIONAL (Anti-Tremor / Slop) ---
-        const percent = 0.2; 
-        const slop = 0.05;
+        const percent = 0.4; 
+        const slop = 0.5;
         const correctionMagnitude = Math.max(penetration - slop, 0) / totalInvMass * percent;
         const correction = normal.scale(correctionMagnitude);
 
         a.setCenter(a.getCenter().subtract(correction.scale(a.invertMass)));
         b.setCenter(b.getCenter().add(correction.scale(b.invertMass)));
-
-        // --- ACORDAR OS CORPOS ---
-        // Se houve colisão significativa, ambos devem sair do sleep
-        if (j > 0.0001) {
-            a.wakeUp();
-            b.wakeUp();
-        }
+        
     }
 
     update(deltaTime) {

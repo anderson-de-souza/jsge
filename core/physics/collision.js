@@ -10,14 +10,9 @@ class Collision {
     #mtv
 
     constructor(bodyA, bodyB, mtv) {
-        expect(RigidBody, bodyA)
-        expect(RigidBody, bodyB)
-        expect(Vector, mtv)
-
         this.#bodyA = bodyA
         this.#bodyB = bodyB
         this.#mtv = mtv
-        
     }
 
     get bodyA() {

@@ -13,6 +13,10 @@ class Rectangle extends Polygon {
         this.height = height
     }
     
+    getType() {
+        return 'rectangle'
+    }
+    
     get edgeCount() {
         return super.edgeCount
     }

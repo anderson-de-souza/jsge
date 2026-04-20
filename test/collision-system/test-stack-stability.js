@@ -15,11 +15,11 @@ const context = canvas.getContext('2d')
 
 // --- SYSTEMS ---
 const renderer = new LayeredViewRenderer(context)
-const physicEngine = new PhysicsEngine(8, 20)
+const physicEngine = new PhysicsEngine(8, 32)
 const looper = Looper.getInstance()
 
 // --- BODY ---
-function createBody(x, y, size, color, mass = 1) {
+function createBody(x, y, size, color, mass = 100) {
 
     const shape = new Polygon(size, 3)
     shape.setCenter(new Vector(x, y))
@@ -55,9 +55,7 @@ function createFloor() {
 }
 
 // --- TORRE ---
-function createStack(x, baseY, size, height) {
-
-    const bodies = []
+function createStack(bodies, x, baseY, size, height) {
 
     for (let i = 0; i < height; i++) {
 
@@ -81,10 +79,11 @@ function createStack(x, baseY, size, height) {
 createFloor()
 
 const stack = createStack(
+    [],
     canvas.width / 2,
     canvas.height - 200,
     30,
-    12 // começa com 5–8
+    8 // começa com 5–8
 )
 
 // --- GRAVIDADE FAKE ---
@@ -94,10 +93,23 @@ function applyFakeGravity() {
     }
 }
 
+// No motor ou no loop
+function applyGravity() {
+    for (const body of stack) {
+        if (body.mass <= 0 || body.sleeping) continue
+        
+        const g = 800
+        body.addForce(0, body.mass * g)
+    }
+}
+
+
 // --- LOOP ---
 looper.addCallback((dt) => {
-    applyFakeGravity();
-    physicEngine.run(dt);
+    const fixedDt = Math.min(dt, 0.060);
+
+applyGravity(fixedDt);
+physicEngine.run(fixedDt);
 })
 
 looper.addCallback(() => renderer.run())

@@ -1,4 +1,3 @@
-import expect from '../../../util/expect.js'
 import Shape from '../../shape/shape.js'
 import Circle from '../../shape/circle.js'
 import Rectangle from '../../shape/rectangle.js'
@@ -34,7 +33,6 @@ class RigidBody {
     #sleeping = false
 
     constructor({ shape, mass = 1, restitution = 0 }) {
-        expect(Shape, shape)
         this.#shape = shape
         this.#shape.body = this
         
@@ -43,7 +41,36 @@ class RigidBody {
     }
 
     update(deltaTime) {
-        if (this.#sleeping) return;
+        
+        if (this.#sleeping) return
+
+        // 1. Lógica de Sleep PRIMEIRO! (Avalia a velocidade do frame anterior)
+        const LINEAR_EPS = 5
+        const ANGULAR_EPS = Math.PI / 180 * 2
+
+        const isSlow = Math.abs(this.#velocityX) < LINEAR_EPS &&
+                       Math.abs(this.#velocityY) < LINEAR_EPS &&
+                       Math.abs(this.#angularVelocity) < ANGULAR_EPS
+                       
+        if (isSlow) {
+            
+            this.#sleepTime += deltaTime
+            
+            // Ajuda o objeto a parar de vez "sugando" a energia restante
+            this.#velocityX *= 0.9; 
+            this.#velocityY *= 0.9;
+            this.#angularVelocity *= 0.9;
+            
+            if (this.#sleepTime > RigidBody.TIME_TO_SLEEP) {
+                this.#sleeping = true
+                this.#velocityX = 0
+                this.#velocityY = 0
+                this.#angularVelocity = 0
+                return; // Para a execução aqui, não calcula gravidade
+            }
+        } else {
+            this.#sleepTime = 0
+        }
 
         // 1. Integrar Forças (Aceleração = Força / Massa)
         const accelerationX = this.#forceX * this.invertMass
@@ -74,105 +101,142 @@ class RigidBody {
         this.#forceY = 0
         this.#torque = 0
 
-        // 6. Lógica de Sleep (Faz o objeto descansar)
-        const LINEAR_EPS = 0.05
-        const ANGULAR_EPS = 0.05
-
-        const isSlow = Math.abs(this.#velocityX) < LINEAR_EPS &&
-                       Math.abs(this.#velocityY) < LINEAR_EPS &&
-                       Math.abs(this.#angularVelocity) < ANGULAR_EPS
-
-        if (isSlow) {
-            this.#sleepTime += deltaTime
-            if (this.#sleepTime > RigidBody.TIME_TO_SLEEP) {
-                this.#sleeping = true
-                this.#velocityX = 0
-                this.#velocityY = 0
-                this.#angularVelocity = 0
-            }
-        } else {
-            this.#sleepTime = 0
-        }
     }
 
     // --- MÉTODOS DE FORÇA E IMPULSO ---
     
     addForce(x, y) {
-        if (this.#sleeping) this.wakeUp();
-        this.#forceX += x;
-        this.#forceY += y;
+        this.#forceX += x
+        this.#forceY += y
     }
 
     // Impulsos alteram a velocidade INSTANTANEAMENTE
-    applyImpulse(x, y) {
-        if (this.#sleeping) this.wakeUp();
-        this.#velocityX += x * this.invertMass;
-        this.#velocityY += y * this.invertMass;
+    applyImpulse(x, y, angular) {
+        // 1. Se estiver dormindo, verifica se o impacto é forte o suficiente para acordar
+        if (this.#sleeping) {
+            
+            const thresholdX = 0.5
+            const thresholdY = 0.5
+            const thresholdAng = Math.PI / 180
+    
+            if (Math.abs(x) > thresholdX || Math.abs(y) > thresholdY || Math.abs(angular) > thresholdAng) {
+                this.wakeUp()
+            } else {
+                // Impacto muito fraco em corpo adormecido: ignoramos para manter estabilidade
+                return 
+            }
+            
+        }
+    
+        // 2. SE CHEGOU AQUI (corpo já estava acordado OU acabou de acordar), aplica as velocidades
+        this.#velocityX += x * this.invertMass
+        this.#velocityY += y * this.invertMass
+        this.#angularVelocity += angular * this.invertMomentOfInertia
+        
     }
+
 
     // --- GETTERS E SETTERS CORE ---
 
-    get id() { return this.#shape.id }
-    get shape() { return this.#shape }
+    get id() { 
+        return this.#shape.id
+    }
+    
+    get shape() { 
+        return this.#shape
+    }
 
-    get mass() { return this.#mass }
+    get mass() {
+        return this.#mass
+    }
+    
     set mass(value) {
-        expect('number', value)
-        if (value < -1 || !Number.isFinite(value)) throw new Error('Mass must be > -1 and finite')
+        if (value < -1 || !Number.isFinite(value)) {
+            throw new Error('Mass must be > -1 and finite')
+        }
         this.#mass = value
         this.#invertMass = value !== 0 ? 1 / value : 0
         this.#momentOfInertia = null // Invalida para recalcular
     }
 
-    get invertMass() { return this.#invertMass }
+    get invertMass() { 
+        return this.#invertMass
+    }
 
-    get restitution() { return this.#restitution }
+    get restitution() {
+        return this.#restitution
+    }
+    
     set restitution(value) {
-        expect('number', value)
-        if (value < 0 || value > 1) throw new Error('Restitution between 0 and 1')
+        if (value < 0 || value > 1) {
+            throw new Error('Restitution between 0 and 1')
+        }
         this.#restitution = value
     }
 
     // --- KINEMATICS (Velocidade e Posição) ---
 
     // REMOVIDO: O Threshold dos setters que quebrava o Solver!
-    get velocityX() { return this.#velocityX }
-    set velocityX(value) { this.#velocityX = expect('number', value) }
+    get velocityX() { 
+        return this.#velocityX 
+    }
+    
+    set velocityX(value) { 
+        this.#velocityX = value
+    }
 
-    get velocityY() { return this.#velocityY }
-    set velocityY(value) { this.#velocityY = expect('number', value) }
+    get velocityY() {
+        return this.#velocityY
+    }
+    
+    set velocityY(value) { 
+        this.#velocityY = value
+    }
 
-    get angularVelocity() { return this.#angularVelocity }
-    set angularVelocity(value) { this.#angularVelocity = expect('number', value) }
+    get angularVelocity() {
+        return this.#angularVelocity
+    }
+    
+    set angularVelocity(value) {
+        this.#angularVelocity = value
+    }
 
-    getVelocity() { return new Vector(this.#velocityX, this.#velocityY) }
+    getVelocity() { 
+        return new Vector(this.#velocityX, this.#velocityY)
+    }
+    
     setVelocity(value) {
-        expect(Vector, value)
         this.#velocityX = value.x
         this.#velocityY = value.y
     }
 
-    get centerX() { return this.#shape.centerX }
+    get centerX() {
+        return this.#shape.centerX
+    }
+    
     set centerX(value) {
-        expect('number', value)
         const dx = value - this.#shape.centerX
         this.#deltaX += dx
         this.#hasMoved ||= Math.abs(dx) > RigidBody.MOVEMENT_THRESHOLD
         this.#shape.centerX = value
     }
 
-    get centerY() { return this.#shape.centerY }
+    get centerY() {
+        return this.#shape.centerY
+    }
+    
     set centerY(value) {
-        expect('number', value)
         const dy = value - this.#shape.centerY
         this.#deltaY += dy
         this.#hasMoved ||= Math.abs(dy) > RigidBody.MOVEMENT_THRESHOLD
         this.#shape.centerY = value
     }
 
-    getCenter() { return this.#shape.getCenter() }
+    getCenter() {
+        return this.#shape.getCenter()
+    }
+    
     setCenter(value) {
-        expect(Vector, value)
         const center = this.getCenter()
         const dx = value.x - center.x
         const dy = value.y - center.y
@@ -182,12 +246,14 @@ class RigidBody {
         this.#shape.setCenter(value)
     }
 
-    get rotationAngle() { return this.#shape.rotationAngle }
+    get rotationAngle() {
+        return this.#shape.rotationAngle
+    }
+    
     set rotationAngle(value) {
-        expect('number', value)
         const delta = value - this.#shape.rotationAngle
         this.#angularDelta += delta
-        this.#hasMoved ||= Math.abs(delta) > RigidBody.MOVEMENT_THRESHOLD
+        this.#hasMoved ||= Math.abs(delta) > (Math.PI / 180)
         this.#shape.rotationAngle = value
     }
 
@@ -195,9 +261,9 @@ class RigidBody {
 
     get momentOfInertia() {
         if (this.#momentOfInertia == null) {
-            if (expect(Circle, this.#shape, false)) {
+            if (this.#shape.getType() === 'circle') {
                 this.#momentOfInertia = 0.5 * this.mass * (this.#shape.radius ** 2)
-            } else if (expect(Rectangle, this.#shape, false)) {
+            } else if (this.#shape.getType() === 'rectangle') {
                 const w = this.#shape.width
                 const h = this.#shape.height
                 this.#momentOfInertia = (1 / 12) * this.#mass * ((w ** 2) + (h ** 2))
@@ -241,8 +307,14 @@ class RigidBody {
 
     // --- ESTADO ---
     
-    get hasMoved() { return this.#hasMoved }
-    markAsMoved() { this.#hasMoved = true }
+    get hasMoved() { 
+        return this.#hasMoved
+    }
+    
+    markAsMoved() {
+        this.#hasMoved = true
+    }
+    
     clearMoved() { 
         this.#hasMoved = false
         this.#deltaX = 0
@@ -254,7 +326,11 @@ class RigidBody {
         this.#sleeping = false
         this.#sleepTime = 0
     }
-    get sleeping() { return this.#sleeping }
+    
+    get sleeping() {
+        return this.#sleeping
+    }
+    
 }
 
 export default RigidBody

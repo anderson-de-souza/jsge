@@ -16,13 +16,16 @@ class Polygon extends Shape {
         this.radius = radius
         this.edgeCount = edgeCount
     }
+    
+    getType() {
+        return 'polygon'
+    }
 
     get edgeCount() {
         return this.#edgeCount
     }
 
     set edgeCount(value) {
-        expect('number', value)
         if (value < 3) {
             throw new Error('Polygon needs to have at least 3 edges')
         }

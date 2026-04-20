@@ -145,6 +145,10 @@ class Shape {
         this.#boundingBox = null
         this.body?.markAsMoved()
     }
+    
+    getType() {
+        throw new Error('getType must be implemented by subclasses of Shape.')
+    }
 
     getLocalCorners() {
         throw new Error('getLocalCorners must be implemented by subclasses of Shape.')
@@ -162,8 +166,6 @@ class Shape {
         let maxY = -Infinity
         
         for (let corner of expect(Array, this.getCorners())) {
-            
-            corner = expect(Vector, corner)
             
             if (corner.x < minX) {
                 minX = corner.x

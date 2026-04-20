@@ -1,4 +1,3 @@
-import expect from './expect.js'
 import Shape from '../core/shape/shape.js'
 
 class SpatialGrid {
@@ -20,13 +19,11 @@ class SpatialGrid {
     }
     
     set cellSize(value) {
-        this.#cellSize = expect('number', value)
+        this.#cellSize = value
         this.#invertCellSize = 1 / this.#cellSize
     }
     
     generateKey(x, y) {
-        expect('number', x)
-        expect('number', y)
         return `${Math.floor(x * this.#invertCellSize)},${Math.floor(y * this.#invertCellSize)}`
     }
     
@@ -35,8 +32,6 @@ class SpatialGrid {
     }
     
     generateKeys(shape) {
-        shape = expect(Shape, shape)
-        
         const box = shape.getBoundingBox()
         
         const startX = Math.floor(box.x * this.#invertCellSize)
@@ -118,7 +113,6 @@ class SpatialGrid {
     }
 
     rebuild(shapes) {
-        expect(Array, shapes)
         
         this.#grid.clear()
         this.#shapeKeys.clear()
@@ -126,10 +120,10 @@ class SpatialGrid {
         for (const shape of shapes) {
             this.addShape(shape)
         }
+        
     }
 
     findAround(shape, range = 1) {
-        expect(Shape, shape)
         
         const around = new Set()
         
